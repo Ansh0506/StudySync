@@ -1,7 +1,7 @@
 import express from "express";
 import protect from "../middlewares/AuthMiddleware.js";
 import uploadPdf from "../config/multer.js";
-import { uploadPdf as uploadPdfController } from "../controllers/PdfController.js";
+import { uploadPdf as uploadPdfController , getPdf, deletePdf} from "../controllers/PdfController.js";
 
 const router = express.Router();
 
@@ -11,5 +11,8 @@ router.post(
   uploadPdf.single("pdf"),
   uploadPdfController
 );
+
+router.get("/:id", protect, getPdf);
+router.delete("/:id", protect, deletePdf);
 
 export default router;

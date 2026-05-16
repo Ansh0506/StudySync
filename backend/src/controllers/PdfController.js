@@ -31,3 +31,48 @@ export const uploadPdf = async (req, res) => {
     res.status(500).json({ message: "PDF upload failed" });
   }
 };
+
+// GET PDF DETAILS
+export const getPdf = async (req, res) => {
+    try {
+        const pdf = await Pdf.findById(req.params.id);
+        
+        if (!pdf) {
+            return res.status(404).json({ message: 'PDF not found' });
+        }
+        
+        res.status(200).json(pdf);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error retrieving PDF', error: error.message });
+    }
+};
+
+// DELETE PDF
+export const deletePdf = async (req, res) => {
+    try {
+        const pdf = await Pdf.findById(req.params.id);
+        
+        if (!pdf) {
+            return res.status(404).json({ message: 'PDF not found' });
+        }
+
+        // Optional security check: Ensure only the uploader or room head can delete
+        // if (pdf.uploadedBy.toString() !== req.user.id) {
+        //     return res.status(403).json({ message: 'Not authorized to delete this PDF' });
+        // }
+
+        // 1. Delete the physical file from the server
+        // Make sure the path resolves correctly based on how you saved it
+        const fullPath = path.resolve(pdf.filePath); 
+        if (fs.existsSync(fullPath)) {
+            fs.unlinkSync(fullPath);
+        }
+
+        // 2. Delete the record from the database
+        await Pdf.findByIdAndDelete(req.params.id);
+        
+        res.status(200).json({ message: 'PDF deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error deleting PDF', error: error.message });
+    }
+};

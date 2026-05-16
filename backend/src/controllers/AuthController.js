@@ -78,3 +78,43 @@ export const login = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const updateProfile = async (req, res) => {
+    try {
+        const { name, email, password, avatar } = req.body;
+        
+        // Find the user making the request
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Update fields if they were provided in the request
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (avatar) user.avatar = avatar;
+        
+        // If updating the password, hash the new one
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(password, salt);
+        }
+
+        await user.save();
+
+        // Return the updated user (excluding the password)
+        const updatedUser = {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            avatar: user.avatar
+        };
+
+        res.status(200).json({ 
+            message: 'Profile updated successfully', 
+            user: updatedUser 
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error updating profile', error: error.message });
+    }
+};
