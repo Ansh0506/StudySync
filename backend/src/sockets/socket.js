@@ -86,6 +86,8 @@ const initSocket = (server) => {
       console.log("🔴 disconnected:", socket.user.name);
     });
   });
+
+  return io;
 };
 
 export default initSocket;

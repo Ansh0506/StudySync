@@ -3,7 +3,7 @@ import cors from "cors";
 import authRoute from "./routes/AuthRoute.js";
 import roomRoutes from "./routes/RoomRoute.js";
 import ChatRoutes from "./routes/ChatRoute.js";
-import pdfRoutes from "./routes/pdf.routes.js";
+import pdfRoutes from "./routes/PdfRoute.js";
 
 const app = express();
 
