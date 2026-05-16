@@ -79,6 +79,7 @@ export const login = async (req, res) => {
   }
 };
 
+// UPDATE USER PROFILE
 export const updateProfile = async (req, res) => {
     try {
         const { name, email, password, avatar } = req.body;

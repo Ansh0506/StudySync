@@ -1,5 +1,7 @@
 import Pdf from "../models/pdf.js";
 import Room from "../models/Room.js";
+import fs from 'fs';
+import path from 'path';
 
 export const uploadPdf = async (req, res) => {
   try {
