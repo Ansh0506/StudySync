@@ -8,6 +8,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { requestLogger } from './middlewares/LogMiddleware.js';
 import { notFoundHandler, errorHandler } from './middlewares/ErrorMiddleware.js';
+import annotationRoutes from './routes/AnnotationRoute.js';
+import activityRoutes from './routes/ActivityRoute.js';
 
 // ES Module fix for __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -29,6 +31,8 @@ app.use("/api/auth", authRoute);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/chat", ChatRoutes);
 app.use("/api/pdf", pdfRoutes);
+app.use('/api/annotations', annotationRoutes);
+app.use('/api/activity', activityRoutes);
 
 app.get("/", (req, res) => {
   res.send("StudySync Backend is running 🚀");

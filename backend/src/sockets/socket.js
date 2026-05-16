@@ -71,6 +71,28 @@ const initSocket = (server) => {
       });
     });
 
+    // ----------------------------------------------------
+    // ✍️ TYPING INDICATORS
+    // ----------------------------------------------------
+    socket.on("typing", ({ roomId }) => {
+      // socket.to() sends to everyone in the room EXCEPT the person typing
+      socket.to(roomId).emit("user-typing", { userName: socket.user.name });
+    });
+
+    socket.on("stop-typing", ({ roomId }) => {
+      socket.to(roomId).emit("user-stopped-typing", { userName: socket.user.name });
+    });
+
+    // ----------------------------------------------------
+    // 🖍️ PDF ANNOTATIONS
+    // ----------------------------------------------------
+    socket.on("draw-annotation", (data) => {
+      // When User A draws, they emit this event.
+      // Expected data: { roomId, pdfId, pageNumber, type, annotationData }
+      // We instantly forward it to User B so it draws on their screen.
+      socket.to(data.roomId).emit("receive-annotation", data);
+    });
+
     // DISCONNECT
     socket.on("disconnect", () => {
       for (const [roomId, users] of roomUsers.entries()) {

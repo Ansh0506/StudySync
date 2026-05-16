@@ -1,5 +1,7 @@
 import Room from "../models/Room.js";
 import generateRoomCode from "../utils/GenerateRoomCode.js";
+import Annotation from '../models/Annotation.js';
+import Activity from '../models/Activity.js';
 
 // CREATE ROOM
 export const createRoom = async (req, res) => {
@@ -46,6 +48,14 @@ export const joinRoom = async (req, res) => {
 
     room.members.push(req.user._id);
     await room.save();
+
+    // Create an activity log entry
+    await Activity.create({
+      roomId: room._id,
+      userId: req.user._id,
+      action: 'JOINED',
+      description: `${req.user.name} joined the room`
+    });
 
     res.json(room);
   } catch (error) {
@@ -94,6 +104,7 @@ export const deleteRoom = async (req, res) => {
         }
 
         // 3. Clean up: Delete database records for PDFs and Messages
+        await Annotation.deleteMany({ roomId: room._id });
         await Pdf.deleteMany({ roomId: room._id });
         await Message.deleteMany({ roomId: room._id });
 
@@ -136,6 +147,14 @@ export const leaveRoom = async (req, res) => {
         // 3. Remove the user from the members array
         room.members = room.members.filter(memberId => memberId.toString() !== req.user.id);
         await room.save();
+
+        // Create an activity log entry
+        await Activity.create({
+          roomId: room._id,
+          userId: req.user._id,
+          action: 'LEFT',
+          description: `${req.user.name} left the room`
+        });
 
         res.status(200).json({ message: 'Successfully left the room' });
     } catch (error) {
