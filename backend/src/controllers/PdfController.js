@@ -22,7 +22,7 @@ export const uploadPdf = async (req, res) => {
       roomId,
       uploadedBy: req.user._id,
       fileName: req.file.originalname,
-      filePath: req.file.path
+      filePath: `Uploads/${req.file.filename}`
     });
 
     // mark active PDF in room
@@ -37,10 +37,11 @@ export const uploadPdf = async (req, res) => {
     });
 
     res.status(201).json(pdf);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "PDF upload failed" });
-  }
+} catch (error) {
+        // THIS LOG IS THE MAGIC KEY
+        console.log("🔴 UPLOAD CRASH REPORT:", error); 
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
 };
 
 // GET PDF DETAILS

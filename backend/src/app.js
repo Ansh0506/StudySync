@@ -25,7 +25,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve the Uploads folder statically
-app.use('/uploads', express.static(path.join(__dirname, '../Uploads')));
+app.use('/Uploads', express.static(path.join(__dirname, '../Uploads')));
 
 app.use("/api/auth", authRoute);
 app.use("/api/rooms", roomRoutes);

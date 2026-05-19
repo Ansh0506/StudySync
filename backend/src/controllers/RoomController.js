@@ -2,6 +2,8 @@ import Room from "../models/Room.js";
 import generateRoomCode from "../utils/GenerateRoomCode.js";
 import Annotation from '../models/Annotation.js';
 import Activity from '../models/Activity.js';
+import fs from 'fs';
+import path from 'path';
 
 // CREATE ROOM
 export const createRoom = async (req, res) => {
@@ -90,7 +92,7 @@ export const deleteRoom = async (req, res) => {
         }
 
         // 1. Verify that the user deleting the room is the room head
-        if (room.head.toString() !== req.user.id) {
+        if (room.head.toString() !== req.user._id) {
             return res.status(403).json({ message: 'Unauthorized: Only the room head can delete this room' });
         }
 
