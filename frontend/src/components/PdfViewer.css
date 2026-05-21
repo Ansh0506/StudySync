@@ -14,6 +14,12 @@
     background: #f0f2f6;
 
     min-height: 0;
+
+    transition: background 0.3s;
+}
+
+.dark .pdf-loader-wrap {
+    background: #0f1419;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -39,6 +45,13 @@
 
     box-shadow:
         0 4px 6px -1px rgba(0, 0, 0, 0.2);
+
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.dark .pdf-dark-toolbar {
+    background-color: #1a1f2e;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -56,6 +69,12 @@
     overflow: auto;
 
     background-color: #e5e7eb;
+
+    transition: background 0.3s;
+}
+
+.dark .pdf-scroll-container {
+    background-color: #0f1419;
 }
 
 /* IMPORTANT */
@@ -86,6 +105,12 @@
     font-size: 13.5px;
 
     font-weight: 300;
+
+    transition: color 0.3s;
+}
+
+.dark .pdf-loading {
+    color: #7a8aaf;
 }
 
 .pdf-loading-spinner {
@@ -99,6 +124,13 @@
     border-top-color: #0f3460;
 
     animation: pdfSpin 0.8s linear infinite;
+
+    transition: border-color 0.3s;
+}
+
+.dark .pdf-loading-spinner {
+    border-color: #3d4d5d;
+    border-top-color: #4a9eff;
 }
 
 @keyframes pdfSpin {
@@ -163,6 +195,12 @@
     height: 20px;
 
     background-color: #4a4a4a;
+
+    transition: background 0.3s;
+}
+
+.dark .pdf-toolbar-divider {
+    background-color: #3d4d5d;
 }
 
 .pdf-toolbar-text {
@@ -173,6 +211,12 @@
     font-family: 'DM Sans', sans-serif;
 
     font-weight: 500;
+
+    transition: color 0.3s;
+}
+
+.dark .pdf-toolbar-text {
+    color: #7a8aaf;
 }
 
 .pdf-page-box {
@@ -193,6 +237,13 @@
     min-width: 30px;
 
     text-align: center;
+
+    transition: background 0.3s, color 0.3s;
+}
+
+.dark .pdf-page-box {
+    background-color: #252535;
+    color: #a0aac8;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -228,8 +279,17 @@
     color: #ffffff;
 }
 
+.dark .pdf-tool-btn:hover {
+    background-color: #3d4d5d;
+    color: #e8ecf1;
+}
+
 .pdf-tool-btn.active {
     background-color: #4a4a4a;
+}
+
+.dark .pdf-tool-btn.active {
+    background-color: #3d5a7f;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -260,6 +320,14 @@
         0 10px 15px -3px rgba(0, 0, 0, 0.3);
 
     z-index: 100;
+
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.dark .pdf-color-dropdown {
+    background: #252535;
+    border-color: #3d4d5d;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
 }
 
 .pdf-color-swatch {

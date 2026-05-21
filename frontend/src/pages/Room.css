@@ -13,6 +13,12 @@
     background: #f3f4f6;
 
     font-family: sans-serif;
+
+    transition: background 0.3s;
+}
+
+.dark .room-page {
+    background: #0f1419;
 }
 
 /* Loading */
@@ -23,6 +29,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+    color: #1f2937;
+    transition: color 0.3s;
+}
+
+.dark .room-loading {
+    color: #e8ecf1;
 }
 
 /* Error */
@@ -54,6 +67,12 @@
     border-radius: 8px;
 
     cursor: pointer;
+
+    transition: background 0.15s;
+}
+
+.room-error-btn:hover {
+    background: #1d4ed8;
 }
 
 /* HEADER */
@@ -74,6 +93,13 @@
     flex-shrink: 0;
 
     z-index: 10;
+
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.dark .room-header {
+    background: #1a1a2e;
+    border-bottom-color: #2d3d4d;
 }
 
 .room-header-left {
@@ -92,10 +118,20 @@
     cursor: pointer;
 
     font-weight: 500;
+
+    transition: color 0.15s;
 }
 
 .room-back-btn:hover {
     color: #2563eb;
+}
+
+.dark .room-back-btn {
+    color: #a0aac8;
+}
+
+.dark .room-back-btn:hover {
+    color: #4a9eff;
 }
 
 .room-title {
@@ -107,6 +143,13 @@
     padding-left: 16px;
 
     border-left: 1px solid #d1d5db;
+
+    transition: color 0.3s, border-color 0.3s;
+}
+
+.dark .room-title {
+    color: #fff;
+    border-left-color: #2d3d4d;
 }
 
 .room-code {
@@ -123,6 +166,14 @@
     font-family: monospace;
 
     color: #374151;
+
+    transition: background 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.dark .room-code {
+    background: #252535;
+    border-color: #3d3d54;
+    color: #a0b0d8;
 }
 
 /* MAIN SPLIT LAYOUT */
@@ -154,6 +205,13 @@
 
     display: flex;
     flex-direction: column;
+
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.dark .room-pdf-section {
+    background: #1a1f2e;
+    border-right-color: #2d3d4d;
 }
 
 /* RESIZER */
@@ -174,6 +232,14 @@
     background: #cbd5e1;
 }
 
+.dark .room-resizer {
+    background: #2d3d4d;
+}
+
+.dark .room-resizer:hover {
+    background: #3d4d5d;
+}
+
 /* CHAT SECTION */
 
 .room-chat-section {
@@ -189,4 +255,11 @@
     flex-direction: column;
 
     box-shadow: -4px 0 15px -3px rgba(0,0,0,0.05);
+
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.dark .room-chat-section {
+    background: #1a1f2e;
+    box-shadow: -4px 0 15px -3px rgba(0,0,0,0.3);
 }

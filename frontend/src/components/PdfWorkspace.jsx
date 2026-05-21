@@ -82,12 +82,23 @@ const PdfWorkspace = ({ room, socket }) => {
                     flex-direction: column;
                     height: 100%;
                     overflow: hidden;
+                    transition: background 0.3s, border-color 0.3s;
+                }
+
+                .dark .ws-sidebar {
+                    background: #1a1f2e;
+                    border-right-color: #2d3d4d;
                 }
 
                 .ws-sidebar-head {
                     padding: 1rem 1rem 0.8rem;
                     border-bottom: 1px solid #e8eaf0;
                     flex-shrink: 0;
+                    transition: border-color 0.3s;
+                }
+
+                .dark .ws-sidebar-head {
+                    border-bottom-color: #2d3d4d;
                 }
 
                 .ws-sidebar-label {
@@ -97,6 +108,11 @@ const PdfWorkspace = ({ room, socket }) => {
                     letter-spacing: 0.1em;
                     text-transform: uppercase;
                     margin-bottom: 0.75rem;
+                    transition: color 0.3s;
+                }
+
+                .dark .ws-sidebar-label {
+                    color: #7a8aaf;
                 }
 
                 .ws-upload-btn {
@@ -125,6 +141,11 @@ const PdfWorkspace = ({ room, socket }) => {
                     color: #c53030;
                     margin-top: 8px;
                     text-align: center;
+                    transition: color 0.3s;
+                }
+
+                .dark .ws-error {
+                    color: #ff6b6b;
                 }
 
                 .ws-pdf-list {
@@ -137,6 +158,8 @@ const PdfWorkspace = ({ room, socket }) => {
                 .ws-pdf-list::-webkit-scrollbar { width: 3px; }
                 .ws-pdf-list::-webkit-scrollbar-thumb { background: #dde3ed; border-radius: 2px; }
 
+                .dark .ws-pdf-list::-webkit-scrollbar-thumb { background: #3d4d5d; }
+
                 .ws-pdf-empty {
                     text-align: center;
                     padding: 2rem 1rem;
@@ -144,6 +167,11 @@ const PdfWorkspace = ({ room, socket }) => {
                     color: #b0b8c8;
                     font-weight: 300;
                     line-height: 1.6;
+                    transition: color 0.3s;
+                }
+
+                .dark .ws-pdf-empty {
+                    color: #7a8aaf;
                 }
 
                 .ws-pdf-item {
@@ -164,9 +192,16 @@ const PdfWorkspace = ({ room, socket }) => {
 
                 .ws-pdf-item:hover { background: #f5f7fb; }
 
+                .dark .ws-pdf-item:hover { background: #252535; }
+
                 .ws-pdf-item.active {
                     background: #eef2f9;
                     border-color: #c5d0e8;
+                }
+
+                .dark .ws-pdf-item.active {
+                    background: #252535;
+                    border-color: #4a9eff;
                 }
 
                 .ws-pdf-icon {
@@ -179,6 +214,11 @@ const PdfWorkspace = ({ room, socket }) => {
                     justify-content: center;
                     flex-shrink: 0;
                     margin-top: 1px;
+                    transition: background 0.3s;
+                }
+
+                .dark .ws-pdf-icon {
+                    background: #3d4d5d;
                 }
 
                 .ws-pdf-item.active .ws-pdf-icon { background: #0f3460; }
@@ -191,15 +231,27 @@ const PdfWorkspace = ({ room, socket }) => {
                     color: #1a1a2e;
                     line-height: 1.3;
                     word-break: break-word;
+                    transition: color 0.3s;
+                }
+
+                .dark .ws-pdf-name {
+                    color: #e8ecf1;
                 }
 
                 .ws-pdf-item.active .ws-pdf-name { color: #0f3460; }
+
+                .dark .ws-pdf-item.active .ws-pdf-name { color: #4a9eff; }
 
                 .ws-pdf-by {
                     font-size: 10.5px;
                     color: #9aa3b2;
                     font-weight: 300;
                     margin-top: 2px;
+                    transition: color 0.3s;
+                }
+
+                .dark .ws-pdf-by {
+                    color: #7a8aaf;
                 }
 
                 /* ─── VIEWER COLUMN ──────────────────────────────────
@@ -214,6 +266,11 @@ const PdfWorkspace = ({ room, socket }) => {
                     padding: 12px;
                     overflow: hidden;
                     background: #f0f2f6;
+                    transition: background 0.3s;
+                }
+
+                .dark .ws-viewer-area {
+                    background: #0f1419;
                 }
 
                 /* ─── VIEWER BOX ─────────────────────────────────────
@@ -230,6 +287,13 @@ const PdfWorkspace = ({ room, socket }) => {
                     border: 1px solid #e8eaf0;
                     overflow: hidden;
                     box-shadow: 0 2px 16px rgba(15,52,96,0.07);
+                    transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+                }
+
+                .dark .ws-viewer-box {
+                    background: #1a1f2e;
+                    border-color: #2d3d4d;
+                    box-shadow: 0 2px 16px rgba(0,0,0,0.3);
                 }
 
                 /* Filename bar above the PDF */
@@ -242,6 +306,12 @@ const PdfWorkspace = ({ room, socket }) => {
                     align-items: center;
                     padding: 0 1rem;
                     gap: 10px;
+                    transition: background 0.3s, border-color 0.3s;
+                }
+
+                .dark .ws-viewer-toolbar {
+                    background: #252535;
+                    border-bottom-color: #3d3d54;
                 }
 
                 .ws-toolbar-icon {
@@ -253,6 +323,11 @@ const PdfWorkspace = ({ room, socket }) => {
                     align-items: center;
                     justify-content: center;
                     flex-shrink: 0;
+                    transition: background 0.3s;
+                }
+
+                .dark .ws-toolbar-icon {
+                    background: #3d4d5d;
                 }
 
                 .ws-toolbar-filename {
@@ -262,6 +337,11 @@ const PdfWorkspace = ({ room, socket }) => {
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                    transition: color 0.3s;
+                }
+
+                .dark .ws-toolbar-filename {
+                    color: #e8ecf1;
                 }
 
                 .ws-toolbar-badge {
@@ -273,6 +353,12 @@ const PdfWorkspace = ({ room, socket }) => {
                     padding: 2px 10px;
                     white-space: nowrap;
                     flex-shrink: 0;
+                    transition: background 0.3s, color 0.3s;
+                }
+
+                .dark .ws-toolbar-badge {
+                    background: #3d4d5d;
+                    color: #a0aac8;
                 }
 
                 /* ─── VIEWER CONTENT ─────────────────────────────────
@@ -305,6 +391,11 @@ const PdfWorkspace = ({ room, socket }) => {
                     color: #b0b8c8;
                     text-align: center;
                     padding: 2rem;
+                    transition: color 0.3s;
+                }
+
+                .dark .ws-empty {
+                    color: #7a8aaf;
                 }
 
                 .ws-empty-icon {
@@ -316,19 +407,46 @@ const PdfWorkspace = ({ room, socket }) => {
                     align-items: center;
                     justify-content: center;
                     margin-bottom: 4px;
+                    transition: background 0.3s;
+                }
+
+                .dark .ws-empty-icon {
+                    background: #2d3d54;
                 }
 
                 .ws-empty-title {
                     font-size: 14.5px;
                     font-weight: 500;
                     color: #9aa3b2;
+                    transition: color 0.3s;
+                }
+
+                .dark .ws-empty-title {
+                    color: #a0aac8;
                 }
 
                 .ws-empty-sub {
                     font-size: 13px;
                     color: #b0b8c8;
                     font-weight: 300;
+                    transition: color 0.3s;
                 }
+
+                .dark .ws-empty-sub {
+                    color: #7a8aaf;
+                }
+
+                /* SVG Icon Colors */
+                .ws-upload-btn svg { stroke: currentColor; transition: stroke 0.3s; }
+                
+                .ws-pdf-icon svg { stroke: #0f3460; transition: stroke 0.3s; }
+                .ws-pdf-item.active .ws-pdf-icon svg { stroke: #fff; }
+                
+                .ws-toolbar-icon svg { stroke: currentColor; color: #0f3460; transition: stroke 0.3s, color 0.3s; }
+                .dark .ws-toolbar-icon svg { color: #a0aac8; }
+
+                .ws-empty-icon svg { stroke: #b0b8c8; color: #b0b8c8; transition: stroke 0.3s, color 0.3s; }
+                .dark .ws-empty-icon svg { stroke: #7a8aaf; color: #7a8aaf; }
             `}</style>
 
             <div className="ws-root">

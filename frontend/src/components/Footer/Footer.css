@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500&display=swap');
+
+.ss-footer {
+    background: #fff;
+    border-top: 1px solid #e8eaf0;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: auto;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.dark .ss-footer {
+    background: #1a1a2e;
+    border-top-color: #2d3d4d;
+}
+
+.ss-footer-inner {
+    max-width: 1160px; 
+    margin: 0 auto;
+    padding: 2rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.ss-footer-brand {
+    display: flex; 
+    align-items: center; 
+    gap: 9px;
+    text-decoration: none;
+}
+
+.ss-footer-icon {
+    width: 28px; 
+    height: 28px;
+    background: #1a1a2e; 
+    color: #fff; /* Icon color in light mode */
+    border-radius: 7px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    transition: background 0.3s, color 0.3s;
+}
+
+.dark .ss-footer-icon {
+    background: #fff;
+    color: #1a1a2e; /* Icon flips to dark navy in dark mode */
+}
+
+.ss-footer-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px; 
+    color: #1a1a2e;
+    letter-spacing: 0.1em; 
+    text-transform: uppercase;
+    transition: color 0.3s;
+}
+
+.dark .ss-footer-name {
+    color: #fff;
+}
+
+.ss-footer-links {
+    display: flex; 
+    align-items: center;
+    gap: 1.8rem; 
+    list-style: none; 
+    margin: 0; 
+    padding: 0;
+}
+
+.ss-footer-links a {
+    font-size: 13px; 
+    color: #9aa3b2;
+    text-decoration: none; 
+    font-weight: 300;
+    transition: color 0.15s;
+}
+
+.dark .ss-footer-links a {
+    color: #7a8aaf;
+}
+
+.ss-footer-links a:hover { 
+    color: #1a1a2e; 
+}
+
+.dark .ss-footer-links a:hover { 
+    color: #fff; 
+}
+
+.ss-footer-copy {
+    font-size: 12.5px; 
+    color: #b0b8c8;
+    font-weight: 300;
+    transition: color 0.3s;
+}
+
+.dark .ss-footer-copy {
+    color: #7a8aaf;
+}
+
+@media (max-width: 600px) {
+    .ss-footer-inner { 
+        flex-direction: column; 
+        align-items: flex-start; 
+        gap: 1.2rem; 
+    }
+    .ss-footer-links { 
+        gap: 1.2rem; 
+        flex-wrap: wrap; 
+    }
+}

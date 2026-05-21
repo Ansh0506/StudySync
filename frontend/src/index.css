@@ -1,3 +1,50 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+html.light {
+  background-color: #fff;
+  color: #1a1a2e;
+}
+
+html.dark {
+  background-color: #0f1419;
+  color: #e8ecf1;
+}
+
+body {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+html.light body {
+  background-color: #fff;
+  color: #1a1a2e;
+}
+
+html.dark body {
+  background-color: #0f1419;
+  color: #e8ecf1;
+}
+
+/* Dark mode support for Tailwind utilities */
+.dark body {
+  background-color: #0f1419;
+  color: #e8ecf1;
+}
+
+/* Ensure smooth transitions for all text and backgrounds */
+* {
+  transition-property: background-color, border-color, color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Override transition for animations */
+[data-transition="none"],
+.no-transition {
+  transition: none !important;
+}

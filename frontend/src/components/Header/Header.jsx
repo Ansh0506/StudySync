@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 const Header = () => {
     const { user, logout } = useAuth();
+    const { isDark, toggleTheme } = useTheme();
     const navigate = useNavigate();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -37,6 +39,12 @@ const Header = () => {
                     background: #fff;
                     border-bottom: 1px solid #e8eaf0;
                     font-family: 'DM Sans', sans-serif;
+                    transition: background 0.3s, border-color 0.3s;
+                }
+
+                .dark .ss-header {
+                    background: #1a1a2e;
+                    border-bottom: 1px solid #2d2d44;
                 }
 
                 .ss-header-inner {
@@ -57,10 +65,19 @@ const Header = () => {
                     display: flex; align-items: center; justify-content: center;
                 }
 
+                .dark .ss-brand-icon {
+                    background: #fff;
+                }
+
                 .ss-brand-text {
                     font-family: 'Playfair Display', serif;
                     font-size: 17px; color: #1a1a2e;
                     letter-spacing: 0.1em; text-transform: uppercase;
+                    transition: color 0.3s;
+                }
+
+                .dark .ss-brand-text {
+                    color: #fff;
                 }
 
                 .ss-nav {
@@ -74,8 +91,15 @@ const Header = () => {
                     border-bottom: 1.5px solid transparent;
                 }
 
+                .dark .ss-nav-link {
+                    color: #a0aac8;
+                }
+
                 .ss-nav-link:hover { color: #1a1a2e; }
+                .dark .ss-nav-link:hover { color: #fff; }
+
                 .ss-nav-link.active { color: #1a1a2e; border-bottom-color: #1a1a2e; }
+                .dark .ss-nav-link.active { color: #fff; border-bottom-color: #fff; }
 
                 .ss-right {
                     display: flex; align-items: center; gap: 1.2rem;
@@ -83,8 +107,42 @@ const Header = () => {
 
                 .ss-greeting {
                     font-size: 13px; color: #9aa3b2; font-weight: 300;
+                    transition: color 0.3s;
                 }
-                .ss-greeting strong { color: #1a1a2e; font-weight: 500; }
+
+                .dark .ss-greeting {
+                    color: #a0aac8;
+                }
+
+                .ss-greeting strong { color: #1a1a2e; font-weight: 500; transition: color 0.3s; }
+                .dark .ss-greeting strong { color: #fff; }
+
+                .ss-theme-toggle {
+                    display: flex; align-items: center; justify-content: center;
+                    width: 36px; height: 36px;
+                    border: 1px solid #e8eaf0;
+                    border-radius: 8px;
+                    background: #f5f7fb;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    color: #1a1a2e;
+                }
+
+                .dark .ss-theme-toggle {
+                    background: #2d2d44;
+                    border-color: #3d3d54;
+                    color: #fff;
+                }
+
+                .ss-theme-toggle:hover {
+                    background: #e8eaf0;
+                    border-color: #cfd3e0;
+                }
+
+                .dark .ss-theme-toggle:hover {
+                    background: #3d3d54;
+                    border-color: #4d4d64;
+                }
 
                 .ss-avatar-btn {
                     display: flex; align-items: center; gap: 7px;
@@ -101,8 +159,13 @@ const Header = () => {
 
                 .ss-chevron {
                     color: #b0b8c8; display: flex;
-                    transition: transform 0.2s;
+                    transition: transform 0.2s, color 0.3s;
                 }
+
+                .dark .ss-chevron {
+                    color: #7a8aaf;
+                }
+
                 .ss-chevron.open { transform: rotate(180deg); }
 
                 .ss-dropdown {
@@ -112,6 +175,13 @@ const Header = () => {
                     box-shadow: 0 12px 40px rgba(15,52,96,0.12);
                     overflow: hidden;
                     animation: dropIn 0.14s ease;
+                    transition: background 0.3s, border-color 0.3s;
+                }
+
+                .dark .ss-dropdown {
+                    background: #252535;
+                    border-color: #3d3d54;
+                    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
                 }
 
                 @keyframes dropIn {
@@ -122,15 +192,30 @@ const Header = () => {
                 .ss-dd-header {
                     padding: 14px 16px;
                     border-bottom: 1px solid #f0f2f6;
+                    transition: border-color 0.3s;
+                }
+
+                .dark .ss-dd-header {
+                    border-bottom-color: #3d3d54;
                 }
 
                 .ss-dd-name {
                     font-size: 14px; font-weight: 500; color: #1a1a2e; margin-bottom: 2px;
+                    transition: color 0.3s;
+                }
+
+                .dark .ss-dd-name {
+                    color: #fff;
                 }
 
                 .ss-dd-email {
                     font-size: 12px; color: #9aa3b2; font-weight: 300;
                     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                    transition: color 0.3s;
+                }
+
+                .dark .ss-dd-email {
+                    color: #a0aac8;
                 }
 
                 .ss-dd-item {
@@ -138,15 +223,31 @@ const Header = () => {
                     padding: 10px 16px; font-size: 13.5px; color: #3c4257;
                     cursor: pointer; border: none; background: none; width: 100%;
                     text-align: left; font-family: 'DM Sans', sans-serif;
-                    text-decoration: none; transition: background 0.12s;
+                    text-decoration: none; transition: background 0.12s, color 0.3s;
+                }
+
+                .dark .ss-dd-item {
+                    color: #d0d8e8;
                 }
 
                 .ss-dd-item:hover { background: #f5f7fb; color: #1a1a2e; }
+                .dark .ss-dd-item:hover { background: #3d3d54; color: #fff; }
 
                 .ss-dd-item.danger { color: #c53030; }
                 .ss-dd-item.danger:hover { background: #fff5f5; }
 
-                .ss-dd-divider { height: 1px; background: #f0f2f6; margin: 3px 0; }
+                .dark .ss-dd-item.danger { color: #ff6b6b; }
+                .dark .ss-dd-item.danger:hover { background: #3d2d2d; }
+
+                .ss-dd-divider { height: 1px; background: #f0f2f6; margin: 3px 0; transition: background 0.3s; }
+                .dark .ss-dd-divider { background: #3d3d54; }
+
+                /* SVG Icon Colors */
+                .ss-brand-icon svg { transition: stroke 0.3s; }
+                .ss-brand-icon svg { stroke: #fff; }
+                .dark .ss-brand-icon svg { stroke: #1a1a2e; }
+
+                .ss-dd-item svg { transition: stroke 0.3s, color 0.3s; color: inherit; }
 
                 @media (max-width: 640px) {
                     .ss-nav { display: none; }
@@ -176,6 +277,31 @@ const Header = () => {
                         <span className="ss-greeting">
                             Hello, <strong>{user?.name?.split(' ')[0] || 'there'}</strong>
                         </span>
+
+                        <button 
+                            className="ss-theme-toggle"
+                            onClick={toggleTheme}
+                            aria-label="Toggle dark mode"
+                            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+                        >
+                            {isDark ? (
+                                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="5"/>
+                                    <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                    <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                    <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                    <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                </svg>
+                            ) : (
+                                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                                </svg>
+                            )}
+                        </button>
 
                         <div style={{ position: 'relative' }} ref={dropdownRef}>
                             <button

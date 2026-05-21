@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 import { io } from 'socket.io-client';
 
-import ChatBox from '../components/ChatBox';
+import ChatBox from '../components/ChatBox/ChatBox';
 import PdfWorkspace from '../components/PdfWorkspace';
 
 import './Room.css';
