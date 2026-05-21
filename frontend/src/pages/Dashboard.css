@@ -2,18 +2,166 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ══════════════════════════════════════════════════════════
+   PAGE SHELL — background canvas (light mode default)
+   ══════════════════════════════════════════════════════════ */
 .db-page {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: #dde3ed;
     font-family: 'DM Sans', sans-serif;
-    transition: background 0.3s;
+    transition: background 0.4s;
+    position: relative;
+    overflow-x: hidden;
+
+    /* ── LIGHT MODE background ── */
+    /*
+       Layer stack (top → bottom):
+       1. Soft dot-grid SVG pattern
+       2. Diagonal faint line grid
+       3. Radial pastel orb — top-right (cornflower blue)
+       4. Radial pastel orb — bottom-left (lavender)
+       5. Base gradient: warm blue-grey → pale slate
+    */
+    background:
+        /* dot grid */
+        radial-gradient(circle, #b0bcd4 1px, transparent 1px),
+        /* faint line grid */
+        linear-gradient(rgba(180,195,220,0.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(180,195,220,0.18) 1px, transparent 1px),
+        /* top-right orb */
+        radial-gradient(ellipse 65% 55% at 92% 8%, rgba(99,147,210,0.18) 0%, transparent 70%),
+        /* bottom-left orb */
+        radial-gradient(ellipse 55% 50% at 5% 95%, rgba(148,110,210,0.12) 0%, transparent 65%),
+        /* base */
+        linear-gradient(160deg, #dce4ef 0%, #e8edf5 45%, #dde3ed 100%);
+
+    background-size:
+        28px 28px,
+        28px 28px,
+        28px 28px,
+        100% 100%,
+        100% 100%,
+        100% 100%;
 }
 
-.dark .db-page {
-    background: #0f1419;
+/* ── LIGHT MODE — animated floating orbs via pseudo-elements ── */
+.db-page::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+
+    background:
+        /* large soft circle top-right */
+        radial-gradient(ellipse 480px 380px at 88% 12%, rgba(100,149,220,0.14) 0%, transparent 70%),
+        /* medium circle bottom-left */
+        radial-gradient(ellipse 360px 300px at 8% 88%, rgba(130,100,210,0.10) 0%, transparent 65%),
+        /* tiny accent bottom-right */
+        radial-gradient(ellipse 240px 200px at 96% 92%, rgba(60,180,160,0.08) 0%, transparent 60%);
+
+    animation: lightOrbDrift 18s ease-in-out infinite alternate;
 }
+
+/* Subtle noise/grain overlay for light mode texture */
+.db-page::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    background-size: 300px 300px;
+}
+
+@keyframes lightOrbDrift {
+    0%   { transform: translate(0, 0) scale(1); }
+    33%  { transform: translate(-18px, 14px) scale(1.04); }
+    66%  { transform: translate(12px, -10px) scale(0.97); }
+    100% { transform: translate(-8px, 20px) scale(1.02); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   DARK MODE background canvas
+   ══════════════════════════════════════════════════════════ */
+.dark .db-page {
+    /*
+       Layer stack:
+       1. Dot-grid (bright-on-dark)
+       2. Diagonal line grids
+       3. Aurora glow — top-left (electric blue)
+       4. Aurora glow — bottom-right (deep violet)
+       5. Subtle mid-canvas bloom
+       6. Base: deep navy
+    */
+    background:
+        /* dot grid */
+        radial-gradient(circle, rgba(99,163,255,0.12) 1px, transparent 1px),
+        /* horizontal lines */
+        linear-gradient(rgba(99,163,255,0.04) 1px, transparent 1px),
+        /* vertical lines */
+        linear-gradient(90deg, rgba(99,163,255,0.04) 1px, transparent 1px),
+        /* aurora top-left */
+        radial-gradient(ellipse 70% 55% at 0% 5%, rgba(30,80,200,0.30) 0%, transparent 65%),
+        /* aurora bottom-right */
+        radial-gradient(ellipse 60% 50% at 100% 100%, rgba(90,30,180,0.25) 0%, transparent 65%),
+        /* mid bloom */
+        radial-gradient(ellipse 50% 40% at 55% 50%, rgba(15,52,96,0.20) 0%, transparent 70%),
+        /* base */
+        linear-gradient(160deg, #080d18 0%, #0a1020 50%, #0f1419 100%);
+
+    background-size:
+        32px 32px,
+        32px 32px,
+        32px 32px,
+        100% 100%,
+        100% 100%,
+        100% 100%,
+        100% 100%;
+}
+
+/* ── DARK MODE — animated aurora orbs ── */
+.dark .db-page::before {
+    background:
+        /* top-left deep blue aurora */
+        radial-gradient(ellipse 520px 420px at 2% 4%, rgba(20,80,220,0.22) 0%, transparent 65%),
+        /* bottom-right violet aurora */
+        radial-gradient(ellipse 450px 380px at 98% 96%, rgba(100,20,200,0.18) 0%, transparent 60%),
+        /* accent teal — mid-right */
+        radial-gradient(ellipse 300px 250px at 90% 45%, rgba(0,170,150,0.07) 0%, transparent 60%),
+        /* subtle center warmth */
+        radial-gradient(ellipse 280px 200px at 48% 55%, rgba(15,52,96,0.15) 0%, transparent 65%);
+
+    animation: darkAuroraDrift 22s ease-in-out infinite alternate;
+}
+
+/* Dark mode — grain overlay (denser, more visible) */
+.dark .db-page::after {
+    opacity: 0.04;
+    background-size: 200px 200px;
+}
+
+@keyframes darkAuroraDrift {
+    0%   { transform: translate(0, 0) scale(1); }
+    25%  { transform: translate(20px, -15px) scale(1.05); }
+    50%  { transform: translate(-12px, 22px) scale(0.96); }
+    75%  { transform: translate(16px, 10px) scale(1.03); }
+    100% { transform: translate(-20px, -8px) scale(1.01); }
+}
+
+/* ── Ensure all content layers above the bg pseudo-elements ── */
+.db-main,
+.db-page > header,
+.db-page > footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* ══════════════════════════════════════════════════════════
+   REST OF STYLES (unchanged from original)
+   ══════════════════════════════════════════════════════════ */
 
 .db-main {
     flex: 1;
@@ -372,7 +520,7 @@
 
 .db-room-name-wrapper {
     flex: 1;
-    min-width: 0; /* Ensures truncation works inside flex child */
+    min-width: 0;
     margin-right: 8px;
 }
 

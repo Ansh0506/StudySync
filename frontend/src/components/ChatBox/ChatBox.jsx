@@ -92,7 +92,8 @@ const ChatBox = ({ room, socket }) => {
             <div className="chat-header">
                 <div className="chat-header-left">
                     <div className="chat-header-icon">
-                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#0f3460" strokeWidth="1.8">
+                        {/* CHANGED TO currentColor */}
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
                             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                         </svg>
                     </div>
@@ -116,7 +117,8 @@ const ChatBox = ({ room, socket }) => {
             <div className="chat-messages">
                 {grouped.length === 0 ? (
                     <div className="chat-empty">
-                        <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#dde3ed" strokeWidth="1.5">
+                        {/* CHANGED TO currentColor */}
+                        <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                         </svg>
                         <p>No messages yet.<br />Be the first to say hi!</p>
@@ -178,6 +180,7 @@ const ChatBox = ({ room, socket }) => {
                         disabled={!newMessage.trim()}
                         aria-label="Send"
                     >
+                        {/* Kept as #fff because the button background is always dark */}
                         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#fff" strokeWidth="2">
                             <line x1="22" y1="2" x2="11" y2="13"/>
                             <polygon points="22 2 15 22 11 13 2 9 22 2"/>

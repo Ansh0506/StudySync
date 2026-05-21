@@ -79,31 +79,44 @@ export const login = async (req, res) => {
   }
 };
 
-// UPDATE USER PROFILE
+//UPDATE PROFILE
 export const updateProfile = async (req, res) => {
     try {
-        const { name, email, password, avatar } = req.body;
+        const { name, email, currentPassword, newPassword } = req.body;
         
-        // Find the user making the request
         const user = await User.findById(req.user.id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Update fields if they were provided in the request
+        // Update basic fields
         if (name) user.name = name;
         if (email) user.email = email;
-        if (avatar) user.avatar = avatar;
         
-        // If updating the password, hash the new one
-        if (password) {
+        // --- NEW: Handle Avatar File Upload ---
+        // If multer successfully processed an image, it will be attached to req.file
+        if (req.file) {
+            // Save the relative path (e.g., "Uploads/12345.jpg") so the frontend can request it
+            user.avatar = `Uploads/${req.file.filename}`;
+        }
+        
+        // Secure Password Update Logic
+        if (newPassword) {
+            if (!currentPassword) {
+                return res.status(400).json({ message: 'Please provide your current password to set a new one.' });
+            }
+
+            const isMatch = await bcrypt.compare(currentPassword, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ message: 'Current password is incorrect.' });
+            }
+
             const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(password, salt);
+            user.password = await bcrypt.hash(newPassword, salt);
         }
 
         await user.save();
 
-        // Return the updated user (excluding the password)
         const updatedUser = {
             _id: user._id,
             name: user.name,
@@ -116,6 +129,7 @@ export const updateProfile = async (req, res) => {
             user: updatedUser 
         });
     } catch (error) {
+        console.error("Profile Update Error:", error);
         res.status(500).json({ message: 'Server error updating profile', error: error.message });
     }
 };

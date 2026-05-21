@@ -30,11 +30,13 @@
     width: 32px; height: 32px; border-radius: 9px;
     background: #eef2f9;
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.3s;
+    transition: background 0.3s, color 0.3s;
+    color: #0f3460; /* Navy in light mode */
 }
 
 .dark .chat-header-icon {
     background: #2d3d54;
+    color: #4a9eff; /* Bright blue in dark mode */
 }
 
 .chat-header-title {
@@ -86,6 +88,15 @@
     color: #7a8aaf;
 }
 
+.chat-empty svg {
+    color: #dde3ed;
+    transition: color 0.3s;
+}
+
+.dark .chat-empty svg {
+    color: #3d4d5d;
+}
+
 /* Message row */
 .msg-row {
     display: flex;
@@ -108,12 +119,11 @@
 
 .msg-row.me .msg-sender-label { text-align: right; }
 
-/* --- THE FIX: Move max-width to the row, let flex do its job --- */
 .msg-bubble-row {
     display: flex; 
     align-items: flex-end; 
     gap: 6px;
-    max-width: 85%; /* Constrain the entire row here instead of the text bubble */
+    max-width: 85%;
 }
 
 .msg-row.me .msg-bubble-row { flex-direction: row-reverse; }
@@ -126,18 +136,14 @@
     flex-shrink: 0; margin-bottom: 1px;
 }
 
-/* --- THE FIX: Stop Flexbox from squishing the text --- */
 .msg-bubble {
     padding: 9px 13px;
     font-size: 13.5px; 
     line-height: 1.5;
-    
-    /* Force the bubble to be exactly as wide as the text needs */
     width: max-content; 
-    max-width: 100%; /* Don't let it overflow the 85% row constraint */
-    
+    max-width: 100%; 
     white-space: pre-wrap; 
-    word-break: break-word; /* Only break massive unbroken strings like URLs */
+    word-break: normal; 
     overflow-wrap: break-word;
 }
 
