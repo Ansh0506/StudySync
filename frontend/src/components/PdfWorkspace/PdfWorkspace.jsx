@@ -49,8 +49,12 @@ const PdfWorkspace = ({ room, socket }) => {
             const { data } = await API.post('/pdf/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            setPdfs([data.pdf, ...pdfs]);
-            setActivePdf(data.pdf);
+            
+            // 🛠️ THE FIX: Handle both response formats gracefully
+            const newPdf = data.pdf || data;
+
+            setPdfs([newPdf, ...pdfs]);
+            setActivePdf(newPdf);
         } catch {
             setError('Failed to upload the PDF.');
         } finally {

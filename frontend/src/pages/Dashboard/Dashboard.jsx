@@ -55,9 +55,13 @@ const DashboardPage = () => {
         setCreating(true);
         try {
             const { data } = await API.post('/rooms/create', { name: newRoomName });
+            
+            // 🛠️ THE FIX: Handle both response formats gracefully
+            const newRoom = data.room || data; 
+
             setNewRoomName('');
-            setRooms([data.room, ...rooms]);
-            navigate(`/room/${data.room._id}`);
+            setRooms([newRoom, ...rooms]);
+            navigate(`/room/${newRoom._id}`);
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to create room.');
         } finally {
