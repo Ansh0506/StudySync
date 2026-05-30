@@ -19,7 +19,13 @@ const pdfSchema = new mongoose.Schema(
     filePath: {
       type: String,
       required: true
-    }
+    },
+    deletedBy: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ]
   },
   { timestamps: true }
 );

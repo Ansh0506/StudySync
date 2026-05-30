@@ -1,0 +1,406 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ─── ROOT ─────────────────────────────────────────── */
+.ws-root {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+}
+
+/* ─── SIDEBAR ────────────────────────────────────── */
+.ws-sidebar {
+    width: 210px;
+    flex-shrink: 0;
+    background: #fff;
+    border-right: 1px solid #e8eaf0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.dark .ws-sidebar {
+    background: #1a1f2e;
+    border-right-color: #2d3d4d;
+}
+
+.ws-sidebar-head {
+    padding: 1rem 1rem 0.8rem;
+    border-bottom: 1px solid #e8eaf0;
+    flex-shrink: 0;
+    transition: border-color 0.3s;
+}
+
+.dark .ws-sidebar-head {
+    border-bottom-color: #2d3d4d;
+}
+
+.ws-sidebar-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #9aa3b2;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    transition: color 0.3s;
+}
+
+.dark .ws-sidebar-label {
+    color: #7a8aaf;
+}
+
+.ws-upload-btn {
+    width: 100%;
+    padding: 9px 12px;
+    background: #1a1a2e;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: background 0.15s;
+}
+
+.ws-upload-btn:hover:not(:disabled) { background: #0f3460; }
+.ws-upload-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.ws-error {
+    font-size: 11.5px;
+    color: #c53030;
+    margin-top: 8px;
+    text-align: center;
+    transition: color 0.3s;
+}
+
+.dark .ws-error {
+    color: #ff6b6b;
+}
+
+.ws-pdf-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0.6rem;
+}
+
+.ws-pdf-list::-webkit-scrollbar { width: 3px; }
+.ws-pdf-list::-webkit-scrollbar-thumb { background: #dde3ed; border-radius: 2px; }
+.dark .ws-pdf-list::-webkit-scrollbar-thumb { background: #3d4d5d; }
+
+.ws-pdf-empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 12.5px;
+    color: #b0b8c8;
+    font-weight: 300;
+    line-height: 1.6;
+    transition: color 0.3s;
+}
+
+.dark .ws-pdf-empty {
+    color: #7a8aaf;
+}
+
+/* ─── PDF ITEM CARDS ────────────────────────────────────── */
+.ws-pdf-item {
+    width: 100%;
+    padding: 9px 10px;
+    border-radius: 12px;
+    border: 1.5px solid transparent;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    text-align: left;
+    margin-bottom: 4px;
+    transition: background 0.13s, border-color 0.13s;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.ws-pdf-item:hover { background: #f5f7fb; }
+.dark .ws-pdf-item:hover { background: #252535; }
+
+.ws-pdf-item.active {
+    background: #eef2f9;
+    border-color: #c5d0e8;
+}
+
+.dark .ws-pdf-item.active {
+    background: #252535;
+    border-color: #4a9eff;
+}
+
+.ws-pdf-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #eef2f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.3s;
+}
+
+.dark .ws-pdf-icon {
+    background: #3d4d5d;
+}
+
+.ws-pdf-item.active .ws-pdf-icon { background: #0f3460; }
+
+.ws-pdf-meta { 
+    flex: 1; 
+    min-width: 0; 
+}
+
+.ws-pdf-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1a1a2e;
+    line-height: 1.3;
+    word-break: break-word;
+    transition: color 0.3s;
+}
+
+.dark .ws-pdf-name {
+    color: #e8ecf1;
+}
+
+.ws-pdf-item.active .ws-pdf-name { color: #0f3460; }
+.dark .ws-pdf-item.active .ws-pdf-name { color: #4a9eff; }
+
+.ws-pdf-by {
+    font-size: 10.5px;
+    color: #9aa3b2;
+    font-weight: 300;
+    margin-top: 2px;
+    transition: color 0.3s;
+}
+
+.dark .ws-pdf-by {
+    color: #7a8aaf;
+}
+
+/* ─── NEW: PDF SIDEBAR DELETE BUTTON ───────────────────── */
+.pdf-sidebar-delete-btn {
+    background: transparent;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    opacity: 0; /* Hidden by default */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Show the trash can only when hovering over the card */
+.ws-pdf-item:hover .pdf-sidebar-delete-btn {
+    opacity: 1; 
+}
+
+.pdf-sidebar-delete-btn:hover {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444; 
+}
+
+.dark .pdf-sidebar-delete-btn {
+    color: #7a8aaf;
+}
+
+.dark .pdf-sidebar-delete-btn:hover {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ff6b6b;
+}
+
+/* ─── VIEWER AREA ──────────────────────────────────────── */
+.ws-viewer-area {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    overflow: hidden;
+    background: #f0f2f6;
+    transition: background 0.3s;
+}
+
+.dark .ws-viewer-area {
+    background: #0f1419;
+}
+
+.ws-viewer-box {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e8eaf0;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(15,52,96,0.07);
+    transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.dark .ws-viewer-box {
+    background: #1a1f2e;
+    border-color: #2d3d4d;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+}
+
+.ws-viewer-toolbar {
+    height: 42px;
+    flex-shrink: 0;
+    background: #fff;
+    border-bottom: 1px solid #e8eaf0;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    gap: 10px;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.dark .ws-viewer-toolbar {
+    background: #252535;
+    border-bottom-color: #3d3d54;
+}
+
+.ws-toolbar-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: #eef2f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.3s;
+}
+
+.dark .ws-toolbar-icon {
+    background: #3d4d5d;
+}
+
+.ws-toolbar-filename {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1a1a2e;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.3s;
+}
+
+.dark .ws-toolbar-filename {
+    color: #e8ecf1;
+}
+
+.ws-toolbar-badge {
+    margin-left: auto;
+    font-size: 10.5px;
+    color: #9aa3b2;
+    background: #f5f7fb;
+    border-radius: 50px;
+    padding: 2px 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.3s, color 0.3s;
+}
+
+.dark .ws-toolbar-badge {
+    background: #3d4d5d;
+    color: #a0aac8;
+}
+
+.ws-viewer-content {
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* ─── EMPTY STATES ─────────────────────────────────────── */
+.ws-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #b0b8c8;
+    text-align: center;
+    padding: 2rem;
+    transition: color 0.3s;
+}
+
+.dark .ws-empty {
+    color: #7a8aaf;
+}
+
+.ws-empty-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: #eef2f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+    transition: background 0.3s;
+}
+
+.dark .ws-empty-icon {
+    background: #2d3d54;
+}
+
+.ws-empty-title {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: #9aa3b2;
+    transition: color 0.3s;
+}
+
+.dark .ws-empty-title {
+    color: #a0aac8;
+}
+
+.ws-empty-sub {
+    font-size: 13px;
+    color: #b0b8c8;
+    font-weight: 300;
+    transition: color 0.3s;
+}
+
+.dark .ws-empty-sub {
+    color: #7a8aaf;
+}
+
+/* ─── SVG ICONS STYLING ─────────────────────────────────── */
+.ws-upload-btn svg { stroke: currentColor; transition: stroke 0.3s; }
+
+.ws-pdf-icon svg { stroke: #0f3460; transition: stroke 0.3s; }
+.ws-pdf-item.active .ws-pdf-icon svg { stroke: #fff; }
+
+.ws-toolbar-icon svg { stroke: currentColor; color: #0f3460; transition: stroke 0.3s, color 0.3s; }
+.dark .ws-toolbar-icon svg { color: #a0aac8; }
+
+.ws-empty-icon svg { stroke: #b0b8c8; color: #b0b8c8; transition: stroke 0.3s, color 0.3s; }
+.dark .ws-empty-icon svg { stroke: #7a8aaf; color: #7a8aaf; }

@@ -59,51 +59,80 @@ export const getPdf = async (req, res) => {
     }
 };
 
-// DELETE PDF
+// SMART DELETE PDF
 export const deletePdf = async (req, res) => {
     try {
         const pdf = await Pdf.findById(req.params.id);
-        
         if (!pdf) {
             return res.status(404).json({ message: 'PDF not found' });
         }
 
-        // Optional security check: Ensure only the uploader or room head can delete
-        if (pdf.uploadedBy.toString() !== req.user.id) {
-            return res.status(403).json({ message: 'Not authorized to delete this PDF' });
+        const room = await Room.findById(pdf.roomId);
+        if (!room) {
+            return res.status(404).json({ message: 'Associated room not found' });
         }
 
-        // 1. Delete the physical file from the server
-        // Make sure the path resolves correctly based on how you saved it
-        const fullPath = path.resolve(pdf.filePath); 
-        if (fs.existsSync(fullPath)) {
-            fs.unlinkSync(fullPath);
-        }
-        // 2. Clean up any annotations associated with this PDF 
-          await Annotation.deleteMany({ pdfId: req.params.id });
+        const userId = req.user._id.toString();
 
-        // 3. Delete the record from the database
-        await Pdf.findByIdAndDelete(req.params.id);
+        // 1. Initialize the array if it doesn't exist yet (for older PDFs)
+        if (!pdf.deletedBy) {
+            pdf.deletedBy = [];
+        }
+
+        // 2. Add the current user to the deletedBy list if they aren't in it
+        if (!pdf.deletedBy.includes(userId)) {
+            pdf.deletedBy.push(userId);
+        }
+
+        // 3. Check for Consensus: Has every current member of the room deleted it?
+        // We check if every member in the room's member array exists in the pdf's deletedBy array.
+        const allMembersDeleted = room.members.every(memberId => 
+            pdf.deletedBy.includes(memberId.toString())
+        );
+
+        // CASE A: Everyone has deleted it -> Nuke it permanently
+        if (allMembersDeleted) {
+            console.log(`🗑️ [BACKEND] Consensus reached. Permanently deleting PDF: ${pdf._id}`);
+            
+            if (pdf.filePath) {
+                const fullPath = path.resolve(pdf.filePath); 
+                if (fs.existsSync(fullPath)) {
+                    fs.unlinkSync(fullPath);
+                }
+            }
+            
+            await Annotation.deleteMany({ pdfId: pdf._id });
+            await Pdf.findByIdAndDelete(pdf._id);
+            
+            return res.status(200).json({ message: 'PDF permanently deleted', action: 'permanently_deleted' });
+        } 
         
-        res.status(200).json({ message: 'PDF deleted successfully' });
+        // CASE B: Only this user deleted it -> Just hide it
+        console.log(`👁️ [BACKEND] User ${userId} hid PDF: ${pdf._id}`);
+        await pdf.save();
+        
+        return res.status(200).json({ message: 'PDF removed from your view', action: 'hidden' });
+
     } catch (error) {
+        console.error('❌ [BACKEND] Delete PDF Error:', error);
         res.status(500).json({ message: 'Server error deleting PDF', error: error.message });
     }
 };
-
 // GET ALL PDFs FOR A SPECIFIC ROOM
 export const getRoomPdfs = async (req, res) => {
     try {
         const { roomId } = req.params;
+        const userId = req.user._id;
 
-        // Find all PDFs associated with this room
-        const pdfs = await Pdf.find({ roomId })
-            .populate('uploadedBy', 'name avatar') // Fetches the uploader's details
-            .sort({ createdAt: -1 }); // Sorts by newest first
+        // Find all PDFs for this room, BUT exclude ones where this user is in the deletedBy array
+        const pdfs = await Pdf.find({ 
+            roomId,
+            deletedBy: { $ne: userId } // $ne means "Not Equal to" or "Does not contain"
+        }).sort({ createdAt: -1 });
 
         res.status(200).json(pdfs);
     } catch (error) {
-        res.status(500).json({ message: 'Server error fetching room PDFs', error: error.message });
+        res.status(500).json({ message: 'Server error fetching PDFs', error: error.message });
     }
 };
 
