@@ -24,7 +24,24 @@ const RoomPage = () => {
 
     // RESIZABLE CHAT WIDTH
     const [chatWidth, setChatWidth] = useState(380);
+    // Check if current user is the permanent master
+    const isMaster = room && (room.master === user?._id || room.head === user?._id);
 
+    // DELETE ROOM HANDLER
+    const handleDeleteRoom = async () => {
+        const confirmMessage = isMaster 
+            ? '⚠️ WARNING: You are the Room Master. This will PERMANENTLY delete the room, all PDFs, and Chats for EVERYONE. Continue?' 
+            : 'Are you sure you want to leave and delete this room from your dashboard?';
+
+        if (!window.confirm(confirmMessage)) return;
+
+        try {
+            await API.delete(`/rooms/${id}`);
+            navigate('/dashboard');
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to delete room');
+        }
+    };
     // SOCKET + ROOM SETUP
     useEffect(() => {
 
@@ -184,8 +201,20 @@ const RoomPage = () => {
 
                 </div>
 
-                <div className="room-code">
-                    Code: {room.roomCode}
+                <div className="room-header-right">
+                    <div className="room-code">
+                        Code: {room.roomCode}
+                    </div>
+
+                    <button 
+                        onClick={handleDeleteRoom}
+                        className="room-delete-btn"
+                        title={isMaster ? "Permanently Delete Room" : "Leave Room"}
+                    >
+                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
                 </div>
 
             </header>

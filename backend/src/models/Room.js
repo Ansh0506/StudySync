@@ -16,6 +16,18 @@ const roomSchema = new mongoose.Schema(
       ref: "User",
       required: true
     },
+    // The original creator (permanent master) - never changes
+    master: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+    // Temporary master when the original master leaves
+    tempMaster: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null
+    },
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,
