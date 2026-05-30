@@ -87,10 +87,13 @@ const initSocket = (server) => {
     // 🖍️ PDF ANNOTATIONS
     // ----------------------------------------------------
     socket.on("draw-annotation", (data) => {
-      // When User A draws, they emit this event.
-      // Expected data: { roomId, pdfId, pageNumber, type, annotationData }
-      // We instantly forward it to User B so it draws on their screen.
       socket.to(data.roomId).emit("receive-annotation", data);
+    });
+    
+    // 🗑️ DELETE/UNDO ANNOTATIONS (Make sure this is here!)
+    socket.on("delete-annotation", (data) => {
+      // socket.to() sends it to everyone in the room EXCEPT the sender
+      socket.to(data.roomId).emit("remove-annotation", data);
     });
 
     // DISCONNECT

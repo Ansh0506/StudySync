@@ -39,3 +39,29 @@ export const getPdfAnnotations = async (req, res) => {
         res.status(500).json({ message: 'Server error fetching annotations', error: error.message });
     }
 };
+// DELETE ANNOTATION (UNDO)
+export const deleteAnnotation = async (req, res) => {
+    try {
+        const targetId = req.params.id;
+        console.log(`\n🗑️ [BACKEND] Attempting to delete highlight: ${targetId}`);
+        
+        // Try to find it by the timestamp string inside annotationData
+        let deleted = await Annotation.findOneAndDelete({ 'annotationData.id': targetId });
+
+        // Fallback: Just in case it somehow got passed as a pure MongoDB _id
+        if (!deleted && targetId.length === 24) {
+            deleted = await Annotation.findByIdAndDelete(targetId);
+        }
+
+        if (!deleted) {
+            console.log("❌ [BACKEND] ERROR: Highlight NOT found in database!");
+            return res.status(404).json({ message: 'Annotation not found in DB' });
+        }
+
+        console.log("✅ [BACKEND] Highlight permanently deleted!");
+        res.status(200).json({ message: 'Annotation removed' });
+    } catch (error) {
+        console.error("❌ [BACKEND] Delete Error:", error);
+        res.status(500).json({ message: 'Server error deleting annotation', error: error.message });
+    }
+};

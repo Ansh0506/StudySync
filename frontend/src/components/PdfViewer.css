@@ -1,380 +1,260 @@
-/* ─────────────────────────────────────────────────────────────
-   PdfViewer.css
-───────────────────────────────────────────────────────────── */
-
-.pdf-loader-wrap {
-    width: 100%;
-    height: 100%;
-
+.pdf-workspace {
     display: flex;
     flex-direction: column;
-
-    overflow: hidden;
-
-    background: #f0f2f6;
-
-    min-height: 0;
-
-    transition: background 0.3s;
-}
-
-.dark .pdf-loader-wrap {
-    background: #0f1419;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   TOP TOOLBAR
-───────────────────────────────────────────────────────────── */
-
-.pdf-dark-toolbar {
-    height: 48px;
-
-    flex-shrink: 0;
-
-    background-color: #2b2b2b;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 0 16px;
-
-    gap: 16px;
-
-    z-index: 50;
-
-    box-shadow:
-        0 4px 6px -1px rgba(0, 0, 0, 0.2);
-
-    transition: background 0.3s, box-shadow 0.3s;
-}
-
-.dark .pdf-dark-toolbar {
-    background-color: #1a1f2e;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-}
-
-/* ─────────────────────────────────────────────────────────────
-   SCROLL CONTAINER
-───────────────────────────────────────────────────────────── */
-
-.pdf-scroll-container {
-    flex: 1;
-
-    min-height: 0;
-    min-width: 0;
-
-    width: 100%;
-
-    overflow: auto;
-
-    background-color: #e5e7eb;
-
-    transition: background 0.3s;
-}
-
-.dark .pdf-scroll-container {
-    background-color: #0f1419;
-}
-
-/* IMPORTANT */
-
-.pdf-scroll-container .PdfHighlighter {
-    min-height: 100%;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   LOADING STATE
-───────────────────────────────────────────────────────────── */
-
-.pdf-loading {
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
     height: 100%;
-
-    gap: 14px;
-
-    font-family: 'DM Sans', sans-serif;
-
-    color: #9aa3b2;
-
-    font-size: 13.5px;
-
-    font-weight: 300;
-
-    transition: color 0.3s;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
 
-.dark .pdf-loading {
-    color: #7a8aaf;
+.pdf-toolbar {
+    background: linear-gradient(90deg, #0f3460 0%, #16213e 100%);
+    padding: 12px 20px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    flex-wrap: wrap;
 }
 
-.pdf-loading-spinner {
+.toolbar-section {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.toolbar-divider {
+    height: 24px;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Navigation buttons */
+.nav-btn {
+    background: linear-gradient(135deg, #2d3d4d 0%, #1a2332 100%);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.nav-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #3d4d5d 0%, #2a3342 100%);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Page display */
+.page-display {
+    font-weight: 700;
+    font-size: 16px;
+    min-width: 50px;
+    text-align: center;
+    color: #ffd700;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Zoom section */
+.zoom-section {
+    gap: 4px;
+}
+
+.zoom-btn {
+    background: linear-gradient(135deg, #2d3d4d 0%, #1a2332 100%);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     width: 36px;
     height: 36px;
-
-    border-radius: 50%;
-
-    border: 2.5px solid #e8eaf0;
-
-    border-top-color: #0f3460;
-
-    animation: pdfSpin 0.8s linear infinite;
-
-    transition: border-color 0.3s;
+    padding: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
 }
 
-.dark .pdf-loading-spinner {
-    border-color: #3d4d5d;
-    border-top-color: #4a9eff;
+.zoom-btn:hover {
+    background: linear-gradient(135deg, #3d4d5d 0%, #2a3342 100%);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-@keyframes pdfSpin {
+.zoom-display {
+    font-weight: 600;
+    font-size: 14px;
+    min-width: 45px;
+    text-align: center;
+    color: #e0e0e0;
+}
+
+/* Color Picker */
+.color-picker-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.color-preview-btn {
+    width: 44px;
+    height: 44px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: white;
+    font-weight: bold;
+}
+
+.color-preview-btn:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.08);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.checkmark {
+    opacity: 0.8;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Dropdown */
+.color-picker-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 8px;
+    background: linear-gradient(135deg, #1a2332 0%, #0f3460 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
     to {
-        transform: rotate(360deg);
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-/* ─────────────────────────────────────────────────────────────
-   HIGHLIGHT POPUP
-───────────────────────────────────────────────────────────── */
-
-.pdf-highlight-popup {
-    background: #1a1a2e;
-
-    color: #fff;
-
-    padding: 7px 14px;
-
-    border-radius: 50px;
-
-    border: none;
-
+.color-option {
+    width: 140px;
+    height: 40px;
+    border: 2px solid transparent;
+    border-radius: 6px;
     cursor: pointer;
-
-    font-family: 'DM Sans', sans-serif;
-
-    font-size: 12.5px;
-
-    font-weight: 500;
-
-    display: flex;
-    align-items: center;
-
-    gap: 6px;
-
-    box-shadow:
-        0 4px 16px rgba(15, 52, 96, 0.25);
-
-    transition: background 0.15s;
-}
-
-.pdf-highlight-popup:hover {
-    background: #0f3460;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   TOOLBAR CONTROLS
-───────────────────────────────────────────────────────────── */
-
-.pdf-toolbar-section {
-    display: flex;
-    align-items: center;
-
-    gap: 8px;
-
-    position: relative;
-}
-
-.pdf-toolbar-divider {
-    width: 1px;
-    height: 20px;
-
-    background-color: #4a4a4a;
-
-    transition: background 0.3s;
-}
-
-.dark .pdf-toolbar-divider {
-    background-color: #3d4d5d;
-}
-
-.pdf-toolbar-text {
-    color: #a0a0a0;
-
-    font-size: 13px;
-
-    font-family: 'DM Sans', sans-serif;
-
-    font-weight: 500;
-
-    transition: color 0.3s;
-}
-
-.dark .pdf-toolbar-text {
-    color: #7a8aaf;
-}
-
-.pdf-page-box {
-    background-color: #1a1a1a;
-
-    color: #e0e0e0;
-
-    font-size: 13px;
-
-    font-family: 'DM Sans', sans-serif;
-
-    font-weight: 600;
-
-    padding: 4px 10px;
-
-    border-radius: 4px;
-
-    min-width: 30px;
-
-    text-align: center;
-
-    transition: background 0.3s, color 0.3s;
-}
-
-.dark .pdf-page-box {
-    background-color: #252535;
-    color: #a0aac8;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   TOOL BUTTONS
-───────────────────────────────────────────────────────────── */
-
-.pdf-tool-btn {
-    background: transparent;
-
-    border: none;
-
-    color: #a0a0a0;
-
-    width: 32px;
-    height: 32px;
-
-    border-radius: 50%;
-
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s,
-        color 0.2s;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-.pdf-tool-btn:hover {
-    background-color: #3a3a3a;
-
-    color: #ffffff;
+.color-option:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.dark .pdf-tool-btn:hover {
-    background-color: #3d4d5d;
-    color: #e8ecf1;
+.color-option.active {
+    border-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 0 0 2px rgba(255, 255, 255, 0.3);
 }
 
-.pdf-tool-btn.active {
-    background-color: #4a4a4a;
+.color-checkmark {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
-.dark .pdf-tool-btn.active {
-    background-color: #3d5a7f;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   COLOR DROPDOWN
-───────────────────────────────────────────────────────────── */
-
-.pdf-color-dropdown {
-    position: absolute;
-
-    top: 40px;
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    background: #2b2b2b;
-
-    border: 1px solid #4a4a4a;
-
-    border-radius: 8px;
-
-    padding: 8px;
-
+.pdf-container {
+    flex: 1;
+    overflow: auto;
+    padding: 20px;
     display: flex;
-
-    gap: 8px;
-
-    box-shadow:
-        0 10px 15px -3px rgba(0, 0, 0, 0.3);
-
-    z-index: 100;
-
-    transition: background 0.3s, border-color 0.3s;
+    justify-content: center;
 }
 
-.dark .pdf-color-dropdown {
-    background: #252535;
-    border-color: #3d4d5d;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+/* This wraps the Page and our Custom Layer */
+/* Prevent user from accidentally selecting the whole page container */
+.pdf-page-wrapper {
+    user-select: none;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    background: white; 
 }
 
-.pdf-color-swatch {
-    width: 24px;
-    height: 24px;
+/* Allow ONLY the text to be selected */
+.react-pdf__Page__textContent {
+    user-select: text !important;
+}
 
-    border-radius: 50%;
+/* Our Custom Top Layer 
+  It must be absolutely positioned to cover the React-PDF Page 
+*/
+/* The invisible glass sitting on top of the PDF */
+.custom-highlight-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10; 
+    pointer-events: none; /* CRITICAL FIX: Lets your mouse click "through" to the text! */
+}
 
+/* The actual colored rectangles */
+.highlight-group {
+    pointer-events: auto; /* Brings the mouse back so the hover tooltip works */
+}
+
+/* --- Delete Highlight Popup Button --- */
+.highlight-delete-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background-color: #ef4444; /* Modern Red */
+    color: white;
     border: none;
-
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
     cursor: pointer;
-
-    transition: transform 0.1s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    z-index: 50; /* Ensures it sits above other highlights */
+    transition: background-color 0.15s, transform 0.15s;
 }
 
-.pdf-color-swatch:hover {
-    transform: scale(1.2);
-}
-
-/* ─────────────────────────────────────────────────────────────
-   PDF PAGE LAYERS
-───────────────────────────────────────────────────────────── */
-
-.PdfHighlighter {
-    position: relative;
-}
-
-.PdfHighlighter__page {
-    position: relative;
-}
-
-.PdfHighlighter__canvas {
-    position: relative;
-    z-index: 1;
-}
-
-.PdfHighlighter__text-layer {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-}
-
-.Highlight__parts {
-    position: absolute;
-    inset: 0;
-
-    z-index: 3;
-
-    pointer-events: none;
+.highlight-delete-btn:hover {
+    background-color: #dc2626; /* Darker Red */
+    transform: translateY(-2px);
 }
