@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import './ChatBox.css'; 
+import './ChatBox.css';
 
 const ChatBox = ({ room, socket }) => {
     const { user } = useAuth();
@@ -11,7 +11,6 @@ const ChatBox = ({ room, socket }) => {
     const messagesEndRef = useRef(null);
     const typingTimeout = useRef(null);
 
-    // Fetch history
     useEffect(() => {
         if (!room) return;
         const fetchMessages = async () => {
@@ -25,24 +24,19 @@ const ChatBox = ({ room, socket }) => {
         fetchMessages();
     }, [room]);
 
-    // Socket listeners
     useEffect(() => {
         if (!socket) return;
-
         socket.on('receive-message', (message) => {
             setMessages((prev) => [...prev, message]);
         });
-
         socket.on('user-typing', ({ userName }) => {
             setTypingUsers((prev) =>
                 prev.includes(userName) ? prev : [...prev, userName]
             );
         });
-
         socket.on('user-stopped-typing', ({ userName }) => {
             setTypingUsers((prev) => prev.filter((n) => n !== userName));
         });
-
         return () => {
             socket.off('receive-message');
             socket.off('user-typing');
@@ -50,7 +44,6 @@ const ChatBox = ({ room, socket }) => {
         };
     }, [socket]);
 
-    // Auto scroll
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages, typingUsers]);
@@ -76,7 +69,6 @@ const ChatBox = ({ room, socket }) => {
     const getInitials = (name) =>
         (name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 
-    // Group consecutive messages from the same sender
     const grouped = messages.reduce((acc, msg, i) => {
         const prev = messages[i - 1];
         const isMe = msg.senderName === user?.name;
@@ -92,23 +84,19 @@ const ChatBox = ({ room, socket }) => {
             <div className="chat-header">
                 <div className="chat-header-left">
                     <div className="chat-header-icon">
-                        {/* CHANGED TO currentColor */}
-                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+                        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                         </svg>
                     </div>
                     <div>
                         <p className="chat-header-title">Room Chat</p>
                         <p className="chat-live-dot">
-                            <span style={{
-                                width: 6, height: 6, borderRadius: '50%',
-                                background: '#22c55e', display: 'inline-block'
-                            }} />
+                            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
                             Live session
                         </p>
                     </div>
                 </div>
-                <span style={{ fontSize: 12, color: '#b0b8c8', fontWeight: 300 }}>
+                <span className="chat-msg-count">
                     {messages.length} msg{messages.length !== 1 ? 's' : ''}
                 </span>
             </div>
@@ -117,8 +105,7 @@ const ChatBox = ({ room, socket }) => {
             <div className="chat-messages">
                 {grouped.length === 0 ? (
                     <div className="chat-empty">
-                        {/* CHANGED TO currentColor */}
-                        <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                        <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                         </svg>
                         <p>No messages yet.<br />Be the first to say hi!</p>
@@ -146,7 +133,6 @@ const ChatBox = ({ room, socket }) => {
                     ))
                 )}
 
-                {/* Typing indicator */}
                 {typingUsers.length > 0 && (
                     <div className="typing-row">
                         <div className="typing-dots">
@@ -180,8 +166,7 @@ const ChatBox = ({ room, socket }) => {
                         disabled={!newMessage.trim()}
                         aria-label="Send"
                     >
-                        {/* Kept as #fff because the button background is always dark */}
-                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#fff" strokeWidth="2">
+                        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="#050508" strokeWidth="2.2">
                             <line x1="22" y1="2" x2="11" y2="13"/>
                             <polygon points="22 2 15 22 11 13 2 9 22 2"/>
                         </svg>

@@ -1,52 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ─── CSS VARIABLES ─────────────────────────────────────────── */
+:root {
+    --black:        #050508;
+    --surface:      #0d0d12;
+    --surface-2:    #13131a;
+    --surface-3:    #1a1a24;
+    --border:       rgba(255,255,255,0.07);
+    --border-hover: rgba(255,255,255,0.14);
+    --cyan:         #00e5ff;
+    --lime:         #b8ff57;
+    --violet:       #c77dff;
+    --rose:         #ff4d6d;
+    --amber:        #ffb703;
+    --text:         #f0f0f8;
+    --text-2:       #8888aa;
+    --text-3:       #55556a;
+}
+
+.light {
+    --black:        #f4f4f8;
+    --surface:      #ffffff;
+    --surface-2:    #f7f7fc;
+    --surface-3:    #eeeef7;
+    --border:       rgba(0,0,0,0.08);
+    --border-hover: rgba(0,0,0,0.15);
+    --text:         #0d0d18;
+    --text-2:       #55557a;
+    --text-3:       #9999bb;
+}
+
+/* ─── PDF VIEWER CONTAINER ─────────────────────── */
 .pdf-workspace {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    background: var(--black);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s;
+    font-family: 'DM Sans', sans-serif;
 }
 
+/* ─── TOOLBAR ─────────────────────── */
 .pdf-toolbar {
-    background: linear-gradient(90deg, #0f3460 0%, #16213e 100%);
+    background: var(--surface-2);
     padding: 12px 20px;
     display: flex;
     gap: 20px;
     justify-content: center;
     align-items: center;
-    color: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    color: var(--text);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    transition: all 0.3s;
+    position: relative;
+}
+
+.pdf-toolbar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--cyan), var(--violet), var(--lime));
+    opacity: 0.6;
 }
 
 .toolbar-section {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
 }
 
 .toolbar-divider {
     height: 24px;
     width: 1px;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--border);
 }
 
-/* Navigation buttons */
+/* ─── NAVIGATION BUTTONS ─────────────────────── */
 .nav-btn {
-    background: linear-gradient(135deg, #2d3d4d 0%, #1a2332 100%);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: transparent;
+    color: var(--text-2);
+    border: 1px solid var(--border);
     padding: 8px 16px;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
     transition: all 0.2s ease;
-    font-size: 14px;
+    font-size: 13px;
+    font-family: 'Syne', sans-serif;
 }
 
 .nav-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, #3d4d5d 0%, #2a3342 100%);
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background: rgba(0,229,255,0.12);
+    border-color: var(--cyan);
+    color: var(--cyan);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,229,255,0.2);
 }
 
 .nav-btn:disabled {
@@ -54,43 +105,71 @@
     cursor: not-allowed;
 }
 
-/* Page display */
+.light .nav-btn:hover:not(:disabled) {
+    background: rgba(0,180,220,0.08);
+    border-color: #0099bb;
+    color: #0099bb;
+    box-shadow: 0 4px 12px rgba(0,153,187,0.15);
+}
+
+/* ─── PAGE DISPLAY ─────────────────────── */
 .page-display {
     font-weight: 700;
     font-size: 16px;
     min-width: 50px;
     text-align: center;
-    color: #ffd700;
+    color: var(--cyan);
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    font-family: 'Syne', sans-serif;
 }
 
-/* Zoom section */
+.light .page-display {
+    color: #0099bb;
+    text-shadow: none;
+}
+
+/* ─── ZOOM SECTION ─────────────────────── */
 .zoom-section {
-    gap: 4px;
+    gap: 8px;
+    display: flex;
+    align-items: center;
 }
 
 .zoom-btn {
-    background: linear-gradient(135deg, #2d3d4d 0%, #1a2332 100%);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: transparent;
+    color: var(--text-2);
+    border: 1px solid var(--border);
     width: 36px;
     height: 36px;
     padding: 0;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 700;
-    font-size: 18px;
+    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
-.zoom-btn:hover {
-    background: linear-gradient(135deg, #3d4d5d 0%, #2a3342 100%);
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.zoom-btn:hover:not(:disabled) {
+    background: rgba(0,229,255,0.12);
+    border-color: var(--cyan);
+    color: var(--cyan);
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(0,229,255,0.2);
+}
+
+.zoom-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.light .zoom-btn:hover:not(:disabled) {
+    background: rgba(0,180,220,0.08);
+    border-color: #0099bb;
+    color: #0099bb;
 }
 
 .zoom-display {
@@ -98,10 +177,11 @@
     font-size: 14px;
     min-width: 45px;
     text-align: center;
-    color: #e0e0e0;
+    color: var(--text-2);
+    font-family: 'Syne', sans-serif;
 }
 
-/* Color Picker */
+/* ─── COLOR PICKER ─────────────────────── */
 .color-picker-container {
     position: relative;
     display: flex;
@@ -111,44 +191,56 @@
 .color-preview-btn {
     width: 44px;
     height: 44px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
-    color: white;
+    color: var(--cyan);
     font-weight: bold;
+    background: rgba(0,229,255,0.08);
 }
 
 .color-preview-btn:hover {
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: scale(1.08);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 6px 12px rgba(0, 0, 0, 0.3);
+    border-color: var(--cyan);
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0,229,255,0.25);
+}
+
+.light .color-preview-btn {
+    background: rgba(0,180,220,0.08);
+    color: #0099bb;
+    border-color: rgba(0,153,187,0.3);
+}
+
+.light .color-preview-btn:hover {
+    border-color: #0099bb;
+    box-shadow: 0 6px 16px rgba(0,153,187,0.2);
 }
 
 .checkmark {
-    opacity: 0.8;
+    opacity: 0.9;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
-/* Dropdown */
+/* ─── COLOR PICKER DROPDOWN ─────────────────────── */
 .color-picker-dropdown {
     position: absolute;
     top: 100%;
     left: 0;
-    margin-top: 8px;
-    background: linear-gradient(135deg, #1a2332 0%, #0f3460 100%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 10px;
-    padding: 10px;
+    margin-top: 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
     z-index: 1000;
     animation: slideDown 0.2s ease;
 }
@@ -156,7 +248,7 @@
 @keyframes slideDown {
     from {
         opacity: 0;
-        transform: translateY(-8px);
+        transform: translateY(-10px);
     }
     to {
         opacity: 1;
@@ -168,59 +260,84 @@
     width: 140px;
     height: 40px;
     border: 2px solid transparent;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .color-option:hover {
-    transform: scale(1.05);
+    transform: scale(1.08);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .color-option.active {
-    border-color: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 0 0 2px rgba(255, 255, 255, 0.3);
+    border-color: var(--cyan);
+    box-shadow: 0 0 16px rgba(0,229,255,0.3);
+}
+
+.light .color-option.active {
+    border-color: #0099bb;
 }
 
 .color-checkmark {
-    color: white;
+    color: #fff;
     font-size: 18px;
     font-weight: bold;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
+/* ─── PDF CONTAINER ─────────────────────── */
 .pdf-container {
     flex: 1;
     overflow: auto;
     padding: 20px;
     display: flex;
     justify-content: center;
+    background: var(--black);
 }
 
-/* This wraps the Page and our Custom Layer */
-/* Prevent user from accidentally selecting the whole page container */
+.pdf-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.pdf-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.pdf-container::-webkit-scrollbar-thumb {
+    background: var(--surface-3);
+    border-radius: 3px;
+}
+
+.pdf-container::-webkit-scrollbar-thumb:hover {
+    background: var(--border-hover);
+}
+
+/* ─── PDF PAGE WRAPPER ─────────────────────── */
 .pdf-page-wrapper {
     user-select: none;
     position: relative;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    background: white; 
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    background: white;
+    border-radius: 4px;
+    transition: all 0.3s;
 }
 
-/* Allow ONLY the text to be selected */
+.pdf-page-wrapper:hover {
+    box-shadow: 0 12px 48px rgba(0,0,0,0.6);
+}
+
+/* ─── PDF TEXT CONTENT ─────────────────────── */
 .react-pdf__Page__textContent {
     user-select: text !important;
 }
 
-/* Our Custom Top Layer 
-  It must be absolutely positioned to cover the React-PDF Page 
-*/
-/* The invisible glass sitting on top of the PDF */
+/* ─── HIGHLIGHT LAYER ─────────────────────── */
 .custom-highlight-layer {
     position: absolute;
     top: 0;
@@ -228,33 +345,38 @@
     width: 100%;
     height: 100%;
     z-index: 10; 
-    pointer-events: none; /* CRITICAL FIX: Lets your mouse click "through" to the text! */
+    pointer-events: none;
 }
 
-/* The actual colored rectangles */
 .highlight-group {
-    pointer-events: auto; /* Brings the mouse back so the hover tooltip works */
+    pointer-events: auto;
 }
 
-/* --- Delete Highlight Popup Button --- */
+/* ─── DELETE HIGHLIGHT BUTTON ─────────────────────── */
 .highlight-delete-btn {
     display: flex;
     align-items: center;
     gap: 4px;
-    background-color: #ef4444; /* Modern Red */
+    background-color: var(--rose);
     color: white;
     border: none;
-    border-radius: 6px;
-    padding: 6px 10px;
+    border-radius: 8px;
+    padding: 7px 11px;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    z-index: 50; /* Ensures it sits above other highlights */
-    transition: background-color 0.15s, transform 0.15s;
+    box-shadow: 0 4px 12px rgba(255, 77, 109, 0.3);
+    z-index: 50;
+    transition: all 0.15s;
+    font-family: 'Syne', sans-serif;
 }
 
 .highlight-delete-btn:hover {
-    background-color: #dc2626; /* Darker Red */
+    background-color: #ff3a4f;
     transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 77, 109, 0.4);
+}
+
+.highlight-delete-btn:active {
+    transform: translateY(0);
 }

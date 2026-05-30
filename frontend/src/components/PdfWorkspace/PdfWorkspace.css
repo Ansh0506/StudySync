@@ -1,4 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ─── CSS VARIABLES ─────────────────────────────────────────── */
+:root {
+    --black:        #050508;
+    --surface:      #0d0d12;
+    --surface-2:    #13131a;
+    --surface-3:    #1a1a24;
+    --border:       rgba(255,255,255,0.07);
+    --border-hover: rgba(255,255,255,0.14);
+    --cyan:         #00e5ff;
+    --lime:         #b8ff57;
+    --violet:       #c77dff;
+    --rose:         #ff4d6d;
+    --text:         #f0f0f8;
+    --text-2:       #8888aa;
+    --text-3:       #55556a;
+}
+
+.light {
+    --black:        #f4f4f8;
+    --surface:      #ffffff;
+    --surface-2:    #f7f7fc;
+    --surface-3:    #eeeef7;
+    --border:       rgba(0,0,0,0.08);
+    --border-hover: rgba(0,0,0,0.15);
+    --text:         #0d0d18;
+    --text-2:       #55557a;
+    --text-3:       #9999bb;
+}
 
 /* ─── ROOT ─────────────────────────────────────────── */
 .ws-root {
@@ -9,14 +38,17 @@
     min-height: 0;
     font-family: 'DM Sans', sans-serif;
     overflow: hidden;
+    background: var(--black);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s;
 }
 
 /* ─── SIDEBAR ────────────────────────────────────── */
 .ws-sidebar {
-    width: 210px;
+    width: 220px;
     flex-shrink: 0;
-    background: #fff;
-    border-right: 1px solid #e8eaf0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -24,67 +56,69 @@
     transition: background 0.3s, border-color 0.3s;
 }
 
-.dark .ws-sidebar {
-    background: #1a1f2e;
-    border-right-color: #2d3d4d;
-}
-
 .ws-sidebar-head {
     padding: 1rem 1rem 0.8rem;
-    border-bottom: 1px solid #e8eaf0;
+    border-bottom: 1px solid var(--border);
     flex-shrink: 0;
     transition: border-color 0.3s;
 }
 
-.dark .ws-sidebar-head {
-    border-bottom-color: #2d3d4d;
-}
-
 .ws-sidebar-label {
     font-size: 11px;
-    font-weight: 500;
-    color: #9aa3b2;
+    font-weight: 600;
+    color: var(--text-3);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     margin-bottom: 0.75rem;
     transition: color 0.3s;
 }
 
-.dark .ws-sidebar-label {
-    color: #7a8aaf;
-}
-
 .ws-upload-btn {
     width: 100%;
-    padding: 9px 12px;
-    background: #1a1a2e;
-    color: #fff;
+    padding: 10px 12px;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    color: var(--black);
     border: none;
-    border-radius: 50px;
-    font-family: 'DM Sans', sans-serif;
+    border-radius: 12px;
+    font-family: 'Syne', sans-serif;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-    transition: background 0.15s;
+    gap: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 0 16px rgba(0,229,255,0.25);
 }
 
-.ws-upload-btn:hover:not(:disabled) { background: #0f3460; }
-.ws-upload-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.ws-upload-btn:hover:not(:disabled) { 
+    opacity: 0.88;
+    box-shadow: 0 0 24px rgba(0,229,255,0.4);
+    transform: translateY(-1px);
+}
+
+.ws-upload-btn:disabled { 
+    opacity: 0.5; 
+    cursor: not-allowed; 
+}
+
+.light .ws-upload-btn {
+    background: linear-gradient(135deg, #00b8d4, #a855c7);
+    color: #fff;
+    box-shadow: 0 0 12px rgba(0,153,187,0.2);
+}
+
+.light .ws-upload-btn:hover:not(:disabled) {
+    box-shadow: 0 0 20px rgba(0,153,187,0.35);
+}
 
 .ws-error {
     font-size: 11.5px;
-    color: #c53030;
+    color: var(--rose);
     margin-top: 8px;
     text-align: center;
     transition: color 0.3s;
-}
-
-.dark .ws-error {
-    color: #ff6b6b;
 }
 
 .ws-pdf-list {
@@ -95,70 +129,80 @@
 }
 
 .ws-pdf-list::-webkit-scrollbar { width: 3px; }
-.ws-pdf-list::-webkit-scrollbar-thumb { background: #dde3ed; border-radius: 2px; }
-.dark .ws-pdf-list::-webkit-scrollbar-thumb { background: #3d4d5d; }
+.ws-pdf-list::-webkit-scrollbar-thumb { 
+    background: var(--surface-3); 
+    border-radius: 2px; 
+}
 
 .ws-pdf-empty {
     text-align: center;
     padding: 2rem 1rem;
     font-size: 12.5px;
-    color: #b0b8c8;
+    color: var(--text-2);
     font-weight: 300;
     line-height: 1.6;
     transition: color 0.3s;
 }
 
-.dark .ws-pdf-empty {
-    color: #7a8aaf;
-}
-
 /* ─── PDF ITEM CARDS ────────────────────────────────────── */
 .ws-pdf-item {
     width: 100%;
-    padding: 9px 10px;
+    padding: 10px 11px;
     border-radius: 12px;
     border: 1.5px solid transparent;
-    background: none;
+    background: transparent;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: 10px;
     text-align: left;
     margin-bottom: 4px;
-    transition: background 0.13s, border-color 0.13s;
+    transition: all 0.15s;
     font-family: 'DM Sans', sans-serif;
 }
 
-.ws-pdf-item:hover { background: #f5f7fb; }
-.dark .ws-pdf-item:hover { background: #252535; }
-
-.ws-pdf-item.active {
-    background: #eef2f9;
-    border-color: #c5d0e8;
+.ws-pdf-item:hover { 
+    background: var(--surface-2);
+    border-color: var(--border-hover);
 }
 
-.dark .ws-pdf-item.active {
-    background: #252535;
-    border-color: #4a9eff;
+.ws-pdf-item.active {
+    background: rgba(0,229,255,0.12);
+    border-color: var(--cyan);
+    box-shadow: 0 0 12px rgba(0,229,255,0.15);
+}
+
+.light .ws-pdf-item.active {
+    background: rgba(0,180,220,0.08);
+    border-color: #0099bb;
+    box-shadow: 0 0 8px rgba(0,153,187,0.1);
 }
 
 .ws-pdf-icon {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 8px;
-    background: #eef2f9;
+    background: var(--surface-2);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: background 0.3s;
+    transition: all 0.3s;
+    color: var(--cyan);
+    font-weight: 700;
+    font-size: 14px;
 }
 
-.dark .ws-pdf-icon {
-    background: #3d4d5d;
+.ws-pdf-item.active .ws-pdf-icon { 
+    background: rgba(0,229,255,0.2);
+    color: var(--cyan);
+    box-shadow: 0 0 12px rgba(0,229,255,0.25);
 }
 
-.ws-pdf-item.active .ws-pdf-icon { background: #0f3460; }
+.light .ws-pdf-icon {
+    background: rgba(0,180,220,0.1);
+    color: #0099bb;
+}
 
 .ws-pdf-meta { 
     flex: 1; 
@@ -168,63 +212,50 @@
 .ws-pdf-name {
     font-size: 13px;
     font-weight: 500;
-    color: #1a1a2e;
+    color: var(--text);
     line-height: 1.3;
     word-break: break-word;
     transition: color 0.3s;
 }
 
-.dark .ws-pdf-name {
-    color: #e8ecf1;
+.ws-pdf-item.active .ws-pdf-name { 
+    color: var(--cyan);
 }
 
-.ws-pdf-item.active .ws-pdf-name { color: #0f3460; }
-.dark .ws-pdf-item.active .ws-pdf-name { color: #4a9eff; }
+.light .ws-pdf-item.active .ws-pdf-name { 
+    color: #0099bb; 
+}
 
 .ws-pdf-by {
     font-size: 10.5px;
-    color: #9aa3b2;
+    color: var(--text-2);
     font-weight: 300;
     margin-top: 2px;
     transition: color 0.3s;
 }
 
-.dark .ws-pdf-by {
-    color: #7a8aaf;
-}
-
-/* ─── NEW: PDF SIDEBAR DELETE BUTTON ───────────────────── */
+/* ─── PDF SIDEBAR DELETE BUTTON ───────────────────── */
 .pdf-sidebar-delete-btn {
     background: transparent;
     border: none;
-    color: #6b7280;
+    color: var(--text-3);
     cursor: pointer;
     padding: 6px;
     border-radius: 6px;
-    opacity: 0; /* Hidden by default */
+    opacity: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.15s;
 }
 
-/* Show the trash can only when hovering over the card */
 .ws-pdf-item:hover .pdf-sidebar-delete-btn {
     opacity: 1; 
 }
 
 .pdf-sidebar-delete-btn:hover {
-    background: rgba(239, 68, 68, 0.15);
-    color: #ef4444; 
-}
-
-.dark .pdf-sidebar-delete-btn {
-    color: #7a8aaf;
-}
-
-.dark .pdf-sidebar-delete-btn:hover {
-    background: rgba(239, 68, 68, 0.15);
-    color: #ff6b6b;
+    background: rgba(255,77,109,0.12);
+    color: var(--rose); 
 }
 
 /* ─── VIEWER AREA ──────────────────────────────────────── */
@@ -236,12 +267,8 @@
     flex-direction: column;
     padding: 12px;
     overflow: hidden;
-    background: #f0f2f6;
+    background: var(--black);
     transition: background 0.3s;
-}
-
-.dark .ws-viewer-area {
-    background: #0f1419;
 }
 
 .ws-viewer-box {
@@ -249,82 +276,79 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    background: #fff;
-    border-radius: 14px;
-    border: 1px solid #e8eaf0;
+    background: var(--surface);
+    border-radius: 16px;
+    border: 1px solid var(--border);
     overflow: hidden;
-    box-shadow: 0 2px 16px rgba(15,52,96,0.07);
-    transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    transition: all 0.3s;
+    position: relative;
 }
 
-.dark .ws-viewer-box {
-    background: #1a1f2e;
-    border-color: #2d3d4d;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+.ws-viewer-box:hover {
+    box-shadow: 0 12px 48px rgba(0,0,0,0.35);
 }
 
 .ws-viewer-toolbar {
-    height: 42px;
+    height: 44px;
     flex-shrink: 0;
-    background: #fff;
-    border-bottom: 1px solid #e8eaf0;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     padding: 0 1rem;
     gap: 10px;
-    transition: background 0.3s, border-color 0.3s;
+    transition: all 0.3s;
+    position: relative;
 }
 
-.dark .ws-viewer-toolbar {
-    background: #252535;
-    border-bottom-color: #3d3d54;
+.ws-viewer-toolbar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--cyan), var(--violet), var(--lime));
+    opacity: 0.5;
 }
 
 .ws-toolbar-icon {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     border-radius: 7px;
-    background: #eef2f9;
+    background: rgba(0,229,255,0.12);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: background 0.3s;
+    transition: all 0.2s;
+    color: var(--cyan);
 }
 
-.dark .ws-toolbar-icon {
-    background: #3d4d5d;
+.ws-toolbar-icon:hover {
+    background: rgba(0,229,255,0.2);
 }
 
 .ws-toolbar-filename {
     font-size: 13px;
     font-weight: 500;
-    color: #1a1a2e;
+    color: var(--text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     transition: color 0.3s;
 }
 
-.dark .ws-toolbar-filename {
-    color: #e8ecf1;
-}
-
 .ws-toolbar-badge {
     margin-left: auto;
-    font-size: 10.5px;
-    color: #9aa3b2;
-    background: #f5f7fb;
+    font-size: 11px;
+    color: var(--text-2);
+    background: var(--surface-3);
+    border: 1px solid var(--border);
     border-radius: 50px;
-    padding: 2px 10px;
+    padding: 3px 12px;
     white-space: nowrap;
     flex-shrink: 0;
-    transition: background 0.3s, color 0.3s;
-}
-
-.dark .ws-toolbar-badge {
-    background: #3d4d5d;
-    color: #a0aac8;
+    transition: all 0.2s;
 }
 
 .ws-viewer-content {
@@ -345,62 +369,53 @@
     align-items: center;
     justify-content: center;
     gap: 12px;
-    color: #b0b8c8;
+    color: var(--text-2);
     text-align: center;
     padding: 2rem;
     transition: color 0.3s;
 }
 
-.dark .ws-empty {
-    color: #7a8aaf;
-}
-
 .ws-empty-icon {
-    width: 56px;
-    height: 56px;
+    width: 60px;
+    height: 60px;
     border-radius: 16px;
-    background: #eef2f9;
+    background: var(--surface-3);
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 4px;
-    transition: background 0.3s;
-}
-
-.dark .ws-empty-icon {
-    background: #2d3d54;
+    transition: all 0.3s;
+    color: var(--cyan);
+    border: 1px solid var(--border);
 }
 
 .ws-empty-title {
     font-size: 14.5px;
-    font-weight: 500;
-    color: #9aa3b2;
+    font-weight: 600;
+    color: var(--text);
     transition: color 0.3s;
-}
-
-.dark .ws-empty-title {
-    color: #a0aac8;
+    font-family: 'Syne', sans-serif;
 }
 
 .ws-empty-sub {
     font-size: 13px;
-    color: #b0b8c8;
+    color: var(--text-2);
     font-weight: 300;
     transition: color 0.3s;
-}
-
-.dark .ws-empty-sub {
-    color: #7a8aaf;
+    max-width: 240px;
 }
 
 /* ─── SVG ICONS STYLING ─────────────────────────────────── */
-.ws-upload-btn svg { stroke: currentColor; transition: stroke 0.3s; }
+.ws-upload-btn svg { 
+    stroke: currentColor; 
+    transition: stroke 0.3s;
+    width: 16px;
+    height: 16px;
+}
 
-.ws-pdf-icon svg { stroke: #0f3460; transition: stroke 0.3s; }
-.ws-pdf-item.active .ws-pdf-icon svg { stroke: #fff; }
-
-.ws-toolbar-icon svg { stroke: currentColor; color: #0f3460; transition: stroke 0.3s, color 0.3s; }
-.dark .ws-toolbar-icon svg { color: #a0aac8; }
-
-.ws-empty-icon svg { stroke: #b0b8c8; color: #b0b8c8; transition: stroke 0.3s, color 0.3s; }
-.dark .ws-empty-icon svg { stroke: #7a8aaf; color: #7a8aaf; }
+.ws-pdf-icon svg { 
+    stroke: currentColor; 
+    transition: stroke 0.3s; 
+    width: 16px;
+    height: 16px;
+}

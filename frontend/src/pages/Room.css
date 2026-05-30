@@ -1,302 +1,333 @@
-* {
-    box-sizing: border-box;
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+* { box-sizing: border-box; }
+
+/* ══════════════════════════════════════════
+   CSS VARIABLES (mirrors Dashboard)
+   ══════════════════════════════════════════ */
+:root {
+    --black:        #050508;
+    --surface:      #0d0d12;
+    --surface-2:    #13131a;
+    --surface-3:    #1a1a24;
+    --border:       rgba(255,255,255,0.07);
+    --border-hover: rgba(255,255,255,0.14);
+
+    --cyan:         #00e5ff;
+    --lime:         #b8ff57;
+    --violet:       #c77dff;
+    --rose:         #ff4d6d;
+    --amber:        #ffb703;
+
+    --text:         #f0f0f8;
+    --text-2:       #8888aa;
+    --text-3:       #55556a;
+
+    --radius-card:  16px;
+    --radius-pill:  100px;
 }
+
+.light {
+    --black:        #f4f4f8;
+    --surface:      #ffffff;
+    --surface-2:    #f7f7fc;
+    --surface-3:    #eeeef7;
+    --border:       rgba(0,0,0,0.08);
+    --border-hover: rgba(0,0,0,0.15);
+    --text:         #0d0d18;
+    --text-2:       #55557a;
+    --text-3:       #9999bb;
+}
+
+/* ══════════════════════════════════════════
+   ROOM PAGE SHELL
+   ══════════════════════════════════════════ */
 .room-page {
     display: flex;
     flex-direction: column;
-
     width: 100%;
     height: 100vh;
-
     overflow: hidden;
-
-    background: #f3f4f6;
-
-    font-family: sans-serif;
-
-    transition: background 0.3s;
+    background: var(--black);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.4s, color 0.4s;
+    position: relative;
 }
 
-.dark .room-page {
-    background: #0f1419;
+/* Ambient glow layer — enhanced for light mode visibility */
+.room-page::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+        radial-gradient(ellipse 500px 350px at 95% 0%,   rgba(0,229,255,0.05)  0%, transparent 70%),
+        radial-gradient(ellipse 400px 300px at 5%  100%, rgba(184,255,87,0.04)  0%, transparent 65%),
+        radial-gradient(ellipse 350px 280px at 50% 50%,  rgba(199,125,255,0.03) 0%, transparent 70%);
+    animation: roomGlowDrift 25s ease-in-out infinite alternate;
 }
 
-/* Loading */
-
-.room-loading {
-    height: 100vh;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: #1f2937;
-    transition: color 0.3s;
+.light .room-page::before {
+    background:
+        radial-gradient(ellipse 600px 400px at 95% 0%,   rgba(0,180,220,0.08)  0%, transparent 65%),
+        radial-gradient(ellipse 500px 350px at 5%  100%, rgba(140,200,50,0.07)  0%, transparent 60%),
+        radial-gradient(ellipse 450px 320px at 50% 50%,  rgba(160,80,240,0.06) 0%, transparent 70%);
+    animation: roomGlowDrift 25s ease-in-out infinite alternate;
 }
 
-.dark .room-loading {
-    color: #e8ecf1;
+@keyframes roomGlowDrift {
+    0%   { transform: translate(0, 0) scale(1); }
+    33%  { transform: translate(-15px, 10px) scale(1.02); }
+    66%  { transform: translate(10px, -8px) scale(0.99); }
+    100% { transform: translate(-8px, 15px) scale(1.01); }
 }
 
-/* Error */
-
-.room-error {
-    height: 100vh;
-
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    color: #ef4444;
-}
-
-.room-error-text {
-    font-size: 20px;
-    margin-bottom: 16px;
-}
-
-.room-error-btn {
-    padding: 10px 16px;
-
-    background: #2563eb;
-    color: white;
-
-    border: none;
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    transition: background 0.15s;
-}
-
-.room-error-btn:hover {
-    background: #1d4ed8;
-}
-
-/* HEADER */
-
+/* ══════════════════════════════════════════
+   HEADER
+   ══════════════════════════════════════════ */
 .room-header {
-    height: 64px;
-
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    padding: 0 24px;
-
-    background: white;
-
-    border-bottom: 1px solid #d1d5db;
-
+    padding: 0 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
     flex-shrink: 0;
-
     z-index: 10;
-
+    position: relative;
     transition: background 0.3s, border-color 0.3s;
 }
 
-.dark .room-header {
-    background: #1a1a2e;
-    border-bottom-color: #2d3d4d;
+/* Top accent stripe — matches dashboard welcome card */
+.room-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--violet), var(--lime));
+    opacity: 0.7;
 }
 
 .room-header-left {
     display: flex;
     align-items: center;
-
-    gap: 16px;
+    gap: 14px;
 }
 
 .room-back-btn {
-    color: #6b7280;
-
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-2);
     background: transparent;
-    border: none;
-
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
     cursor: pointer;
-
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
     font-weight: 500;
-
-    transition: color 0.15s;
+    padding: 5px 13px;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 
 .room-back-btn:hover {
-    color: #2563eb;
+    color: var(--cyan);
+    border-color: rgba(0,229,255,0.3);
+    background: rgba(0,229,255,0.06);
 }
 
-.dark .room-back-btn {
-    color: #a0aac8;
-}
-
-.dark .room-back-btn:hover {
-    color: #4a9eff;
+.light .room-back-btn:hover {
+    color: #0099bb;
+    border-color: rgba(0,153,187,0.3);
+    background: rgba(0,153,187,0.06);
 }
 
 .room-title {
-    font-size: 20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
     font-weight: 700;
-
-    color: #1f2937;
-
-    padding-left: 16px;
-
-    border-left: 1px solid #d1d5db;
-
+    color: var(--text);
+    padding-left: 14px;
+    border-left: 1px solid var(--border);
+    letter-spacing: -0.01em;
     transition: color 0.3s, border-color 0.3s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 340px;
 }
-
-.dark .room-title {
-    color: #fff;
-    border-left-color: #2d3d4d;
-}
-
-.room-code {
-    background: #f3f4f6;
-
-    padding: 6px 12px;
-
-    border-radius: 8px;
-
-    border: 1px solid #e5e7eb;
-
-    font-size: 14px;
-
-    font-family: monospace;
-
-    color: #374151;
-
-    transition: background 0.3s, border-color 0.3s, color 0.3s;
-}
-
-.dark .room-code {
-    background: #252535;
-    border-color: #3d3d54;
-    color: #a0b0d8;
-}
-
-/* HEADER RIGHT SECTION */
 
 .room-header-right {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
-/* DELETE BUTTON */
+.room-code {
+    background: var(--surface-3);
+    padding: 5px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    font-size: 12.5px;
+    font-family: 'DM Mono', 'Fira Mono', monospace;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+    transition: background 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.light .room-code { color: #0099bb; }
 
 .room-delete-btn {
     background: transparent;
-    border: none;
-    color: #6b7280;
+    border: 1px solid var(--border);
+    color: var(--text-3);
     cursor: pointer;
     padding: 6px 8px;
-    border-radius: 6px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.15s;
+    transition: color 0.15s, background 0.15s, border-color 0.15s;
 }
 
 .room-delete-btn:hover {
-    background: #fee2e2;
-    color: #ef4444;
+    color: var(--rose);
+    background: rgba(255,77,109,0.12);
+    border-color: rgba(255,77,109,0.25);
 }
 
-.dark .room-delete-btn {
-    color: #a0aac8;
-}
-
-.dark .room-delete-btn:hover {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ff6b6b;
-}
-
-/* MAIN SPLIT LAYOUT */
-
+/* ══════════════════════════════════════════
+   MAIN SPLIT LAYOUT
+   ══════════════════════════════════════════ */
 .room-main {
     flex: 1;
-
     display: flex;
-
     overflow: hidden;
-
     min-width: 0;
-    
     width: 100%;
+    position: relative;
+    z-index: 1;
 }
 
-/* PDF SECTION */
-
+/* ── PDF SECTION ── */
 .room-pdf-section {
     flex: 1;
-
     min-width: 0;
-
     overflow: hidden;
-
-    background: white;
-
-    border-right: 1px solid #d1d5db;
-
+    background: var(--surface-2);
+    border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-
     transition: background 0.3s, border-color 0.3s;
 }
 
-.dark .room-pdf-section {
-    background: #1a1f2e;
-    border-right-color: #2d3d4d;
+/* ── RESIZER ── */
+.room-resizer {
+    width: 4px;
+    background: var(--border);
+    cursor: col-resize;
+    flex-shrink: 0;
+    transition: background 0.15s;
+    position: relative;
 }
 
-/* RESIZER */
-
-.room-resizer {
-    width: 5px;
-
-    background: #e5e7eb;
-
-    cursor: col-resize;
-
-    transition: background 0.15s;
-
-    flex-shrink: 0;
+.room-resizer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    width: 12px;
+    left: -4px;
 }
 
 .room-resizer:hover {
-    background: #cbd5e1;
+    background: rgba(0,229,255,0.3);
 }
 
-.dark .room-resizer {
-    background: #2d3d4d;
+.light .room-resizer:hover {
+    background: rgba(0,153,187,0.3);
 }
 
-.dark .room-resizer:hover {
-    background: #3d4d5d;
-}
-
-/* CHAT SECTION */
-
+/* ── CHAT SECTION ── */
 .room-chat-section {
     height: 100%;
-
     overflow: hidden;
-
     flex-shrink: 0;
-
-    background: white;
-
+    background: var(--surface);
     display: flex;
     flex-direction: column;
-
-    box-shadow: -4px 0 15px -3px rgba(0,0,0,0.05);
-
-    transition: background 0.3s, box-shadow 0.3s;
+    border-left: 1px solid var(--border);
+    transition: background 0.3s, border-color 0.3s;
 }
 
-.dark .room-chat-section {
-    background: #1a1f2e;
-    box-shadow: -4px 0 15px -3px rgba(0,0,0,0.3);
+/* ══════════════════════════════════════════
+   LOADING STATE
+   ══════════════════════════════════════════ */
+.room-loading {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--black);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+
+    /* gradient text */
+    background: var(--black);
+    color: transparent;
+    -webkit-background-clip: unset;
+}
+
+/* We override with a span trick via a wrapper approach — simpler: just color */
+.room-loading {
+    color: var(--text-2);
+}
+
+/* ══════════════════════════════════════════
+   ERROR STATE
+   ══════════════════════════════════════════ */
+.room-error {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--black);
+    gap: 16px;
+}
+
+.room-error-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--rose);
+}
+
+.room-error-btn {
+    padding: 10px 24px;
+    background: var(--cyan);
+    color: #050508;
+    border: none;
+    border-radius: var(--radius-pill);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 0 16px rgba(0,229,255,0.3);
+    transition: opacity 0.15s, box-shadow 0.15s;
+}
+
+.room-error-btn:hover {
+    opacity: 0.85;
+    box-shadow: 0 0 24px rgba(0,229,255,0.5);
+}
+
+.light .room-error-btn {
+    background: #00b8d4;
+    color: #fff;
+    box-shadow: none;
 }
