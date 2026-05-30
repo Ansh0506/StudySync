@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/Login';
 import RegisterPage from './pages/Register';
-import DashboardPage from './pages/Dashboard'; 
+import DashboardPage from './pages/Dashboard/Dashboard'; 
 import ProfilePage from './pages/Profile/Profile'; // <-- Import the new Profile page
 import RoomPage from './pages/Room'; // <-- Import the new Room page
 

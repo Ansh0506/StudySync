@@ -5,7 +5,7 @@ import API from '../services/api';
 import { io } from 'socket.io-client';
 
 import ChatBox from '../components/ChatBox/ChatBox';
-import PdfWorkspace from '../components/PdfWorkspace';
+import PdfWorkspace from '../components/PdfWorkspace/PdfWorkspace';
 
 import './Room.css';
 

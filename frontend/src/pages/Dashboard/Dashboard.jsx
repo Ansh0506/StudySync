@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import API from '../services/api';
-import Header from '../components/Header/Header';
-import Footer from '../components/Footer/Footer';
+import { useAuth } from '../../context/AuthContext';
+import API from '../../services/api';
+import Header from '../../components/Header/Header';
+import Footer from '../../components/Footer/Footer';
+import ConfirmModal from '../../components/Reusable/ConfirmModal';
 
 // Import the separated CSS file
 import './Dashboard.css';
@@ -31,6 +32,9 @@ const DashboardPage = () => {
     const [loading, setLoading] = useState(true);
     const [creating, setCreating] = useState(false);
     const [joining, setJoining] = useState(false);
+    
+    // State to track which room is being deleted
+    const [roomToDelete, setRoomToDelete] = useState(null);
 
     useEffect(() => { fetchRooms(); }, []);
 
@@ -76,18 +80,23 @@ const DashboardPage = () => {
         }
     };
 
-    // --- Delete Room Handler ---
-    const handleDeleteRoom = async (roomId, e) => {
+    // 1. Triggers when you click the trash can icon
+    const handleDeleteClick = (roomId, e) => {
         e.stopPropagation(); // Prevents the card from navigating to the room
-        if (!window.confirm('Are you sure you want to delete this room? This action cannot be undone.')) {
-            return;
-        }
+        setRoomToDelete(roomId); // Opens the modal
+    };
+
+    // 2. Triggers when you click "Delete Room" inside the modal
+    const confirmDeleteRoom = async () => {
+        if (!roomToDelete) return;
 
         try {
-            await API.delete(`/rooms/${roomId}`);
-            setRooms(rooms.filter((room) => room._id !== roomId));
+            await API.delete(`/rooms/${roomToDelete}`);
+            setRooms(rooms.filter((room) => room._id !== roomToDelete));
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to delete room. You may not be the owner.');
+        } finally {
+            setRoomToDelete(null); // Closes the modal
         }
     };
 
@@ -227,7 +236,7 @@ const DashboardPage = () => {
                                                 </div>
                                                 <button 
                                                     className="db-room-delete-btn" 
-                                                    onClick={(e) => handleDeleteRoom(room._id, e)}
+                                                    onClick={(e) => handleDeleteClick(room._id, e)}
                                                     title="Delete Room"
                                                 >
                                                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -257,7 +266,6 @@ const DashboardPage = () => {
                                             <button
                                                 className="db-room-enter"
                                                 onClick={(e) => { e.stopPropagation(); navigate(`/room/${room._id}`); }}
-                                                /* REMOVED: style={{ color: color.accent }} */
                                             >
                                                 Enter Room
                                                 <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -271,10 +279,19 @@ const DashboardPage = () => {
                         )}
                     </div>
                 </div>
-
             </main>
 
             <Footer />
+
+            {/* Custom Confirm Modal */}
+            <ConfirmModal 
+                isOpen={!!roomToDelete}
+                title="Delete Room"
+                message="Are you sure you want to delete this room? This action cannot be undone."
+                onConfirm={confirmDeleteRoom}
+                onCancel={() => setRoomToDelete(null)}
+                confirmText="Delete Room"
+            />
         </div>
     );
 };

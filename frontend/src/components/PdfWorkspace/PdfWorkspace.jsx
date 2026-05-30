@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import API from '../services/api';
-import { useAuth } from '../context/AuthContext';
-import PdfViewer from './PdfViewer';
-import './PdfWorkspace.css'; // Importing the new CSS file
+import API from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
+import PdfViewer from '../PdfViewer';
+import './PdfWorkspace.css'; 
+import ConfirmModal from '../Reusable/ConfirmModal';
 
 const PdfWorkspace = ({ room, socket }) => {
     const { user } = useAuth();
@@ -11,6 +12,9 @@ const PdfWorkspace = ({ room, socket }) => {
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState('');
     const fileInputRef = useRef(null);
+    
+    // State to track which PDF is about to be deleted
+    const [pdfToDelete, setPdfToDelete] = useState(null);
 
     // Fetch PDFs on load
     useEffect(() => {
@@ -55,25 +59,27 @@ const PdfWorkspace = ({ room, socket }) => {
         }
     };
 
-    // --- NEW: Delete PDF Handler ---
-    const handleDeletePdf = async (e, pdfId) => {
-        e.stopPropagation(); // Prevents the click from also selecting the PDF
-        
-        if (!window.confirm("Remove this PDF from your workspace?")) return;
+    // 1. This triggers when you click the trash can icon
+    const handleDeleteClick = (e, pdfId) => {
+        e.stopPropagation(); 
+        setPdfToDelete(pdfId); // Open the modal
+    };
+
+    // 2. This triggers when you click "Delete" inside the modal
+    const confirmDeletePdf = async () => {
+        if (!pdfToDelete) return;
         
         try {
-            await API.delete(`/pdf/${pdfId}`);
-            
-            // Instantly remove it from the local state list
-            setPdfs(prevPdfs => prevPdfs.filter(pdf => pdf._id !== pdfId));
-            
-            // If they deleted the PDF they were currently looking at, clear the viewer
-            if (activePdf && activePdf._id === pdfId) {
+            await API.delete(`/pdf/${pdfToDelete}`);
+            setPdfs(prevPdfs => prevPdfs.filter(pdf => pdf._id !== pdfToDelete));
+            if (activePdf && activePdf._id === pdfToDelete) {
                 setActivePdf(null); 
             }
         } catch (error) {
             console.error("Failed to delete PDF:", error);
             setError('Failed to remove PDF.');
+        } finally {
+            setPdfToDelete(null); // Close the modal
         }
     };
 
@@ -120,7 +126,6 @@ const PdfWorkspace = ({ room, socket }) => {
                         </div>
                     ) : (
                         pdfs.map((pdf) => (
-                            // Changed to a <div> so we can safely nest the delete <button> inside it
                             <div
                                 key={pdf._id}
                                 className={`ws-pdf-item ${activePdf?._id === pdf._id ? 'active' : ''}`}
@@ -140,10 +145,10 @@ const PdfWorkspace = ({ room, socket }) => {
                                     <p className="ws-pdf-by">by {pdf.uploadedBy?.name || 'User'}</p>
                                 </div>
 
-                                {/* --- NEW: Delete Button --- */}
+                                {/* FIX: Ensure this calls handleDeleteClick */}
                                 <button 
                                     className="pdf-sidebar-delete-btn" 
-                                    onClick={(e) => handleDeletePdf(e, pdf._id)}
+                                    onClick={(e) => handleDeleteClick(e, pdf._id)}
                                     title="Remove PDF"
                                 >
                                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -200,6 +205,16 @@ const PdfWorkspace = ({ room, socket }) => {
                 )}
             </div>
 
+            {/* FIX: Actually render the ConfirmModal component at the bottom of the workspace! */}
+            <ConfirmModal 
+                isOpen={!!pdfToDelete}
+                title="Remove PDF"
+                message="Are you sure you want to remove this PDF from your workspace? If everyone removes it, it will be permanently deleted."
+                onConfirm={confirmDeletePdf}
+                onCancel={() => setPdfToDelete(null)}
+                confirmText="Remove PDF"
+            />
+            
         </div>
     );
 };
