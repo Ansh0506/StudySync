@@ -5,12 +5,14 @@ import PdfViewer from '../PdfViewer';
 import './PdfWorkspace.css'; 
 import ConfirmModal from '../Reusable/ConfirmModal';
 
-const PdfWorkspace = ({ room, socket }) => {
+const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
     const { user } = useAuth();
     const [pdfs, setPdfs] = useState([]);
     const [activePdf, setActivePdf] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState('');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOverlayOpen, setIsSidebarOverlayOpen] = useState(false);
     const fileInputRef = useRef(null);
     
     // State to track which PDF is about to be deleted
@@ -94,8 +96,22 @@ const PdfWorkspace = ({ room, socket }) => {
         <div className="ws-root">
 
             {/* ── Sidebar ── */}
-            <div className="ws-sidebar">
+            <div className={`ws-sidebar ${!isSidebarOpen ? 'collapsed' : ''} ${isFullscreen ? 'fullscreen-hidden' : ''}`}>
+                {isFullscreen && (
+                    <div className="ws-overlay-backdrop" onClick={() => setIsSidebarOverlayOpen(false)} />
+                )}
                 <div className="ws-sidebar-head">
+                    <button 
+                        className="ws-toggle-btn"
+                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                        title={isSidebarOpen ? 'Hide Files' : 'Show Files'}
+                    >
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13 3v5a2 2 0 002 2h5" />
+                        </svg>
+                        <span className="ws-toggle-label">Files</span>
+                    </button>
                     <p className="ws-sidebar-label">Documents</p>
                     <input
                         type="file"
@@ -165,6 +181,109 @@ const PdfWorkspace = ({ room, socket }) => {
                 </div>
             </div>
 
+            {/* ── Collapsed Sidebar Toggle OR Fullscreen Sidebar Toggle ── */}
+            {(!isSidebarOpen || (isFullscreen && !isSidebarOverlayOpen)) && (
+                <button 
+                    className="ws-collapse-toggle"
+                    onClick={() => isFullscreen ? setIsSidebarOverlayOpen(true) : setIsSidebarOpen(true)}
+                    title={isFullscreen ? "Show Documents" : "Show Files"}
+                >
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 3v5a2 2 0 002 2h5" />
+                    </svg>
+                </button>
+            )}
+
+            {/* ── Sidebar Overlay (Fullscreen Mode) ── */}
+            {isFullscreen && isSidebarOverlayOpen && (
+                <div className="ws-sidebar-overlay">
+                    <div className="ws-sidebar-overlay-content">
+                        <button 
+                            className="ws-overlay-close-btn"
+                            onClick={() => setIsSidebarOverlayOpen(false)}
+                            title="Close"
+                        >
+                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        <div className="ws-sidebar-overlay-scroll">
+                            <div className="ws-sidebar-head">
+                                <p className="ws-sidebar-label">Documents</p>
+                                <input
+                                    type="file"
+                                    accept=".pdf"
+                                    ref={fileInputRef}
+                                    onChange={handleFileUpload}
+                                    style={{ display: 'none' }}
+                                />
+                                <button
+                                    className="ws-upload-btn"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    disabled={isUploading}
+                                >
+                                    {isUploading ? (
+                                        <>Uploading…</>
+                                    ) : (
+                                        <>
+                                            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                                            </svg>
+                                            Upload PDF
+                                        </>
+                                    )}
+                                </button>
+                                {error && <p className="ws-error">{error}</p>}
+                            </div>
+
+                            <div className="ws-pdf-list">
+                                {pdfs.length === 0 ? (
+                                    <div className="ws-pdf-empty">
+                                        No documents yet.<br />Upload a PDF to get started.
+                                    </div>
+                                ) : (
+                                    pdfs.map((pdf) => (
+                                        <div
+                                            key={pdf._id}
+                                            className={`ws-pdf-item ${activePdf?._id === pdf._id ? 'active' : ''}`}
+                                            onClick={() => {
+                                                setActivePdf(pdf);
+                                                setIsSidebarOverlayOpen(false);
+                                            }}
+                                        >
+                                            <div className="ws-pdf-icon">
+                                                <svg width="14" height="14" fill="none" viewBox="0 0 24 24"
+                                                    stroke={activePdf?._id === pdf._id ? '#fff' : '#0f3460'}
+                                                    strokeWidth="1.8">
+                                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                                    <polyline points="14 2 14 8 20 8"/>
+                                                </svg>
+                                            </div>
+                                            
+                                            <div className="ws-pdf-meta">
+                                                <p className="ws-pdf-name">{truncateName(pdf.fileName)}</p>
+                                                <p className="ws-pdf-by">by {pdf.uploadedBy?.name || 'User'}</p>
+                                            </div>
+
+                                            <button 
+                                                className="pdf-sidebar-delete-btn" 
+                                                onClick={(e) => handleDeleteClick(e, pdf._id)}
+                                                title="Remove PDF"
+                                            >
+                                                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* ── Viewer ── */}
             <div className="ws-viewer-area">
                 {!activePdf ? (
@@ -193,9 +312,21 @@ const PdfWorkspace = ({ room, socket }) => {
                                 </svg>
                             </div>
                             <span className="ws-toolbar-filename">{activePdf.fileName}</span>
-                            <span className="ws-toolbar-badge">
-                                Hold Alt + drag to select area
-                            </span>
+                            <button 
+                                className="ws-fullscreen-btn"
+                                onClick={() => setIsFullscreen(!isFullscreen)}
+                                title={isFullscreen ? "Exit Fullscreen (Esc)" : "Fullscreen"}
+                            >
+                                {isFullscreen ? (
+                                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6h12v12" />
+                                    </svg>
+                                ) : (
+                                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M18 18H6V6" />
+                                    </svg>
+                                )}
+                            </button>
                         </div>
 
                         <div className="ws-viewer-content">

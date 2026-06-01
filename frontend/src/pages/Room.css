@@ -98,7 +98,7 @@
     flex-shrink: 0;
     z-index: 10;
     position: relative;
-    transition: background 0.3s, border-color 0.3s;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
 }
 
 /* Top accent stripe — matches dashboard welcome card */
@@ -221,7 +221,7 @@
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    transition: background 0.3s, border-color 0.3s;
+    transition: background 0.3s, border-color 0.3s, width 0.3s ease-in-out;
 }
 
 /* ── RESIZER ── */
@@ -330,4 +330,132 @@
     background: #00b8d4;
     color: #fff;
     box-shadow: none;
+}
+
+/* ══════════════════════════════════════════
+   CHAT OVERLAY (Fullscreen Mode)
+   ══════════════════════════════════════════ */
+.room-chat-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 380px;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.room-chat-overlay-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.chat-overlay-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 77, 109, 0.12);
+    border: 1px solid rgba(255, 77, 109, 0.25);
+    border-radius: 8px;
+    color: var(--rose);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.2s;
+}
+
+.chat-overlay-close-btn:hover {
+    background: rgba(255, 77, 109, 0.2);
+    border-color: rgba(255, 77, 109, 0.4);
+}
+
+.chat-overlay-close-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+}
+
+.chat-toggle-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--cyan);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 101;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.chat-toggle-btn:hover {
+    background: var(--surface-2);
+    border-color: var(--cyan);
+    box-shadow: 0 6px 24px rgba(0, 229, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.chat-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+}
+
+.light .room-chat-overlay {
+    background: #ffffff;
+    border-left-color: rgba(0, 0, 0, 0.08);
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+}
+
+.light .chat-overlay-close-btn {
+    background: rgba(220, 38, 38, 0.12);
+    border-color: rgba(220, 38, 38, 0.25);
+    color: #dc2626;
+}
+
+.light .chat-overlay-close-btn:hover {
+    background: rgba(220, 38, 38, 0.2);
+    border-color: rgba(220, 38, 38, 0.4);
+}
+
+.light .chat-toggle-btn {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.08);
+    color: #0099bb;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.light .chat-toggle-btn:hover {
+    background: #f7f7fc;
+    border-color: #0099bb;
+    box-shadow: 0 6px 24px rgba(0, 180, 220, 0.15);
 }

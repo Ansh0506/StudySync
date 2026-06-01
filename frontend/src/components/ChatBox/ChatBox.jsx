@@ -3,7 +3,7 @@ import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import './ChatBox.css';
 
-const ChatBox = ({ room, socket }) => {
+const ChatBox = ({ room, socket, isOverlay = false }) => {
     const { user } = useAuth();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
@@ -96,9 +96,11 @@ const ChatBox = ({ room, socket }) => {
                         </p>
                     </div>
                 </div>
-                <span className="chat-msg-count">
-                    {messages.length} msg{messages.length !== 1 ? 's' : ''}
-                </span>
+                {!isOverlay && (
+                    <span className="chat-msg-count">
+                        {messages.length} msg{messages.length !== 1 ? 's' : ''}
+                    </span>
+                )}
             </div>
 
             {/* Messages */}

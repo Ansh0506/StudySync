@@ -24,6 +24,10 @@ const RoomPage = () => {
 
     // RESIZABLE CHAT WIDTH
     const [chatWidth, setChatWidth] = useState(380);
+    // FULLSCREEN MODE
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    // CHAT OVERLAY IN FULLSCREEN
+    const [isChatOverlayOpen, setIsChatOverlayOpen] = useState(false);
     // Check if current user is the permanent master
     const isMaster = room && (room.master === user?._id || room.head === user?._id);
 
@@ -148,6 +152,17 @@ const RoomPage = () => {
         );
     };
 
+    // ESCAPE KEY TO EXIT FULLSCREEN
+    React.useEffect(() => {
+        const handleEscapeKey = (e) => {
+            if (e.key === 'Escape' && isFullscreen) {
+                setIsFullscreen(false);
+            }
+        };
+        window.addEventListener('keydown', handleEscapeKey);
+        return () => window.removeEventListener('keydown', handleEscapeKey);
+    }, [isFullscreen, setIsFullscreen]);
+
     // LOADING
     if (loading || authLoading) {
 
@@ -184,7 +199,7 @@ const RoomPage = () => {
         <div className="room-page">
 
             {/* HEADER */}
-            <header className="room-header">
+            <header className="room-header" style={{ display: isFullscreen ? 'none' : 'flex' }}>
 
                 <div className="room-header-left">
 
@@ -226,39 +241,82 @@ const RoomPage = () => {
                 <section
                     className="room-pdf-section"
                     style={{
-                        width: `calc(100% - ${chatWidth}px)`
+                        width: isFullscreen ? '100%' : `calc(100% - ${chatWidth}px)`
                     }}
                 >
 
                     <PdfWorkspace
                         room={room}
                         socket={socket}
+                        isFullscreen={isFullscreen}
+                        setIsFullscreen={setIsFullscreen}
                     />
 
                 </section>
 
                 {/* RESIZER */}
-                <div
-                    className="room-resizer"
-                    onMouseDown={startResize}
-                />
+                {!isFullscreen && (
+                    <div
+                        className="room-resizer"
+                        onMouseDown={startResize}
+                    />
+                )}
 
                 {/* CHAT SECTION */}
-                <aside
-                    className="room-chat-section"
-                    style={{
-                        width: `${chatWidth}px`
-                    }}
-                >
+                {!isFullscreen && (
+                    <aside
+                        className="room-chat-section"
+                        style={{
+                            width: `${chatWidth}px`
+                        }}
+                    >
 
-                    {socket && (
-                        <ChatBox
-                            room={room}
-                            socket={socket}
-                        />
-                    )}
+                        {socket && (
+                            <ChatBox
+                                room={room}
+                                socket={socket}
+                            />
+                        )}
 
-                </aside>
+                    </aside>
+                )}
+
+                {/* CHAT OVERLAY (Fullscreen Mode) */}
+                {isFullscreen && isChatOverlayOpen && (
+                    <div className="room-chat-overlay">
+                        <button 
+                            className="chat-overlay-close-btn"
+                            onClick={() => setIsChatOverlayOpen(false)}
+                            title="Close"
+                        >
+                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        <div className="room-chat-overlay-content">
+                            {socket && (
+                                <ChatBox
+                                    room={room}
+                                    socket={socket}
+                                    isOverlay={true}
+                                />
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* CHAT TOGGLE BUTTON (Fullscreen Mode) */}
+                {isFullscreen && !isChatOverlayOpen && (
+                    <button 
+                        className="chat-toggle-btn"
+                        onClick={() => setIsChatOverlayOpen(true)}
+                        title="Show Chat"
+                    >
+                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                    </button>
+                )}
 
             </main>
 

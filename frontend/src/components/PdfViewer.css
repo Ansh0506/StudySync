@@ -294,10 +294,12 @@
 /* ─── PDF CONTAINER ─────────────────────── */
 .pdf-container {
     flex: 1;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding: 20px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     background: var(--black);
 }
 
@@ -316,6 +318,13 @@
 
 .pdf-container::-webkit-scrollbar-thumb:hover {
     background: var(--border-hover);
+}
+
+.pdf-document {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* ─── PDF PAGE WRAPPER ─────────────────────── */
@@ -346,6 +355,139 @@
     height: 100%;
     z-index: 10; 
     pointer-events: none;
+}
+
+/* ─── PAGE INPUT GROUP ─────────────────────── */
+.page-input-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px 12px;
+    transition: all 0.2s ease;
+}
+
+.page-input-group:hover {
+    border-color: var(--cyan);
+    background: rgba(0,229,255,0.12);
+}
+
+.page-input {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    width: 40px;
+    text-align: center;
+    outline: none;
+    font-family: 'Syne', sans-serif;
+}
+
+.page-input::placeholder {
+    color: var(--text-3);
+}
+
+.page-input:focus {
+    color: var(--cyan);
+}
+
+.page-separator {
+    color: var(--text-3);
+    font-weight: 600;
+}
+
+.total-pages {
+    color: var(--text-2);
+    font-weight: 600;
+    font-family: 'Syne', sans-serif;
+}
+
+.light .page-input-group {
+    background: rgba(0,180,220,0.06);
+    border-color: rgba(0,153,187,0.2);
+}
+
+.light .page-input-group:hover {
+    border-color: #0099bb;
+    background: rgba(0,180,220,0.1);
+}
+
+.light .page-input:focus {
+    color: #0099bb;
+}
+
+/* ─── ZOOM INPUT GROUP ─────────────────────── */
+.zoom-input-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px 12px;
+    transition: all 0.2s ease;
+    min-width: 80px;
+}
+
+.zoom-input-group:hover {
+    border-color: var(--cyan);
+    background: rgba(0,229,255,0.12);
+}
+
+.zoom-input {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    width: 35px;
+    text-align: right;
+    outline: none;
+    font-family: 'Syne', sans-serif;
+}
+
+.zoom-input::placeholder {
+    color: var(--text-3);
+}
+
+.zoom-input:focus {
+    color: var(--cyan);
+}
+
+.zoom-percent {
+    color: var(--text-2);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.light .zoom-input-group {
+    background: rgba(0,180,220,0.06);
+    border-color: rgba(0,153,187,0.2);
+}
+
+.light .zoom-input-group:hover {
+    border-color: #0099bb;
+    background: rgba(0,180,220,0.1);
+}
+
+.light .zoom-input:focus {
+    color: #0099bb;
+}
+
+/* ─── PDF PAGE CONTAINER (for continuous scroll) ─────────────────────── */
+.pdf-page-container {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.page-separator-line {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 20px 0 10px 0;
 }
 
 .highlight-group {
