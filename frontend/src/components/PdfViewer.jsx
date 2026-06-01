@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import API from '../services/api';
+import API, { getAssetUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -28,14 +28,13 @@ const PdfViewer = ({ activePdf, room, socket }) => {
     const [highlights, setHighlights] = useState([]);
     const [activeColor, setActiveColor] = useState(COLORS[0]);
 
-    // --- NEW: Track which highlight is clicked ---
     const [selectedHighlightId, setSelectedHighlightId] = useState(null);
     
     // Color picker dropdown state
     const [showColorPicker, setShowColorPicker] = useState(false);
     const colorPickerRef = useRef(null);
 
-    const pdfUrl = `http://localhost:5000/${encodeURI(activePdf.filePath.replace(/\\/g, '/'))}`;
+    const pdfUrl = getAssetUrl(activePdf.filePath);
 
     // --- DETECT CURRENT PAGE ON SCROLL ---
     useEffect(() => {
@@ -204,7 +203,7 @@ const PdfViewer = ({ activePdf, room, socket }) => {
     }, [socket, activePdf._id]);
 
     // --- REUSABLE DELETE FUNCTION ---
-    const deleteHighlight = async (highlightId) => {
+    const deleteHighlight = useCallback(async (highlightId) => {
         console.log(`🚀 [FRONTEND] Initiating Delete for ID: ${highlightId}`);
 
         // 1. Remove locally
@@ -227,7 +226,7 @@ const PdfViewer = ({ activePdf, room, socket }) => {
         } catch (error) {
             console.error('❌ [FRONTEND] DB Delete Failed:', error.response?.data || error.message);
         }
-    };
+    }, [activePdf._id, room._id, socket]);
 
     // 3. UNDO (CTRL + Z) LOGIC
     useEffect(() => {
@@ -244,7 +243,7 @@ const PdfViewer = ({ activePdf, room, socket }) => {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [highlights, user._id, activePdf._id, room._id, socket]);
+    }, [deleteHighlight, highlights, user._id]);
 
     // 4. CAPTURE MOUSE HIGHLIGHTS
     const handleMouseUp = async (e) => {

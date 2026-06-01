@@ -39,7 +39,7 @@ export const register = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error occured" });
+    res.status(500).json({ message: "Server error occurred" });
   }
 };
 
@@ -57,7 +57,7 @@ export const login = async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
-      return res.status(400).json({ message: "password is incorrect" });
+      return res.status(400).json({ message: "Password is incorrect" });
 
     const token = jwt.sign(
       { id: user._id },
@@ -93,10 +93,7 @@ export const updateProfile = async (req, res) => {
         if (name) user.name = name;
         if (email) user.email = email;
         
-        // --- NEW: Handle Avatar File Upload ---
-        // If multer successfully processed an image, it will be attached to req.file
         if (req.file) {
-            // Save the relative path (e.g., "Uploads/12345.jpg") so the frontend can request it
             user.avatar = `Uploads/${req.file.filename}`;
         }
         

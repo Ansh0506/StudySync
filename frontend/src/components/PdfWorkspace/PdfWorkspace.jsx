@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import API from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
 import PdfViewer from '../PdfViewer';
 import './PdfWorkspace.css'; 
 import ConfirmModal from '../Reusable/ConfirmModal';
 
 const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
-    const { user } = useAuth();
     const [pdfs, setPdfs] = useState([]);
     const [activePdf, setActivePdf] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -26,7 +24,7 @@ const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
                 const { data } = await API.get(`/pdf/room/${room._id}`);
                 setPdfs(data);
                 if (data.length > 0) setActivePdf(data[0]);
-            } catch (err) {
+            } catch {
                 setError('Could not load documents.');
             }
         };
@@ -52,7 +50,6 @@ const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             
-            // 🛠️ THE FIX: Handle both response formats gracefully
             const newPdf = data.pdf || data;
 
             setPdfs([newPdf, ...pdfs]);
@@ -65,13 +62,11 @@ const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
         }
     };
 
-    // 1. This triggers when you click the trash can icon
     const handleDeleteClick = (e, pdfId) => {
         e.stopPropagation(); 
-        setPdfToDelete(pdfId); // Open the modal
+        setPdfToDelete(pdfId);
     };
 
-    // 2. This triggers when you click "Delete" inside the modal
     const confirmDeletePdf = async () => {
         if (!pdfToDelete) return;
         
@@ -85,7 +80,7 @@ const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
             console.error("Failed to delete PDF:", error);
             setError('Failed to remove PDF.');
         } finally {
-            setPdfToDelete(null); // Close the modal
+            setPdfToDelete(null);
         }
     };
 

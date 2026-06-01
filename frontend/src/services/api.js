@@ -1,11 +1,18 @@
 import axios from 'axios';
 
-// Create a central axios instance
+export const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '');
+export const SERVER_BASE_URL = API_BASE_URL.replace(/\/api$/, '');
+
+export const getAssetUrl = (filePath) => {
+    if (!filePath) return '';
+    const normalizedPath = filePath.replace(/\\/g, '/').replace(/^\/+/, '');
+    return `${SERVER_BASE_URL}/${encodeURI(normalizedPath)}`;
+};
+
 const API = axios.create({
-    baseURL: 'http://localhost:5000/api', // Point this to your backend URL
+    baseURL: API_BASE_URL,
 });
 
-// Request Interceptor: Automatically attach the token to every request
 API.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');

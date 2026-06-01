@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import API from '../services/api';
+import API, { SERVER_BASE_URL } from '../services/api';
 import { io } from 'socket.io-client';
 
 import ChatBox from '../components/ChatBox/ChatBox';
 import PdfWorkspace from '../components/PdfWorkspace/PdfWorkspace';
+import ConfirmModal from '../components/Reusable/ConfirmModal';
 
 import './Room.css';
 
@@ -21,6 +22,7 @@ const RoomPage = () => {
     const [socket, setSocket] = useState(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // RESIZABLE CHAT WIDTH
     const [chatWidth, setChatWidth] = useState(380);
@@ -28,22 +30,20 @@ const RoomPage = () => {
     const [isFullscreen, setIsFullscreen] = useState(false);
     // CHAT OVERLAY IN FULLSCREEN
     const [isChatOverlayOpen, setIsChatOverlayOpen] = useState(false);
-    // Check if current user is the permanent master
-    const isMaster = room && (room.master === user?._id || room.head === user?._id);
+    const getId = (value) => value?._id || value;
+    const isMaster = room && (
+        getId(room.master)?.toString() === user?._id ||
+        getId(room.head)?.toString() === user?._id
+    );
 
-    // DELETE ROOM HANDLER
-    const handleDeleteRoom = async () => {
-        const confirmMessage = isMaster 
-            ? '⚠️ WARNING: You are the Room Master. This will PERMANENTLY delete the room, all PDFs, and Chats for EVERYONE. Continue?' 
-            : 'Are you sure you want to leave and delete this room from your dashboard?';
-
-        if (!window.confirm(confirmMessage)) return;
-
+    const confirmDeleteRoom = async () => {
         try {
             await API.delete(`/rooms/${id}`);
             navigate('/dashboard');
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to delete room');
+        } finally {
+            setShowDeleteModal(false);
         }
     };
     // SOCKET + ROOM SETUP
@@ -63,7 +63,7 @@ const RoomPage = () => {
 
                 const token = localStorage.getItem('token');
 
-                newSocket = io('http://localhost:5000', {
+                newSocket = io(SERVER_BASE_URL, {
                     auth: { token }
                 });
 
@@ -153,7 +153,7 @@ const RoomPage = () => {
     };
 
     // ESCAPE KEY TO EXIT FULLSCREEN
-    React.useEffect(() => {
+    useEffect(() => {
         const handleEscapeKey = (e) => {
             if (e.key === 'Escape' && isFullscreen) {
                 setIsFullscreen(false);
@@ -222,7 +222,7 @@ const RoomPage = () => {
                     </div>
 
                     <button 
-                        onClick={handleDeleteRoom}
+                        onClick={() => setShowDeleteModal(true)}
                         className="room-delete-btn"
                         title={isMaster ? "Permanently Delete Room" : "Leave Room"}
                     >
@@ -319,6 +319,19 @@ const RoomPage = () => {
                 )}
 
             </main>
+
+            <ConfirmModal
+                isOpen={showDeleteModal}
+                title={isMaster ? 'Delete this room?' : 'Leave this room?'}
+                message={
+                    isMaster
+                        ? 'You are the room owner. This will permanently delete the room, PDFs, chat, and activity for everyone.'
+                        : 'This will remove the room from your dashboard. Other members can keep using it.'
+                }
+                confirmText={isMaster ? 'Delete Room' : 'Leave Room'}
+                onConfirm={confirmDeleteRoom}
+                onCancel={() => setShowDeleteModal(false)}
+            />
 
         </div>
     );

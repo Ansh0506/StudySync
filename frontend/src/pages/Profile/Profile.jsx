@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
-import API from '../../services/api';
+import API, { getAssetUrl } from '../../services/api';
 import './Profile.css';
 
 const ProfilePage = () => {
@@ -10,7 +10,7 @@ const ProfilePage = () => {
     const [activeTab, setActiveTab] = useState('general');
     
     const initialAvatar = user?.avatar 
-    ? `http://localhost:5000/${user.avatar.replace(/\\/g, '/')}` 
+    ? getAssetUrl(user.avatar)
     : null;
     
     // Form States

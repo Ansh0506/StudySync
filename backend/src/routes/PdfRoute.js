@@ -1,5 +1,5 @@
 import express from "express";
-import { uploadPdf, getPdf, deletePdf , getRoomPdfs , downloadPdf} from "../controllers/PdfController.js";
+import { uploadPdf, getPdf, deletePdf, getRoomPdfs, downloadPdf } from "../controllers/PdfController.js";
 import protect from "../middlewares/AuthMiddleware.js";
 import upload from "../config/multer.js";
 
@@ -13,7 +13,7 @@ router.post(
   uploadPdf
 );
 router.get('/room/:roomId', protect, getRoomPdfs);
+router.get('/download/:id', protect, downloadPdf);
 router.get("/:id", protect, getPdf);
 router.delete("/:id", protect, deletePdf);
-router.get('/download/:id', protect, downloadPdf);
 export default router;

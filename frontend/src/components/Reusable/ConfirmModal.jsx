@@ -1,4 +1,3 @@
-import React from 'react';
 import './ConfirmModal.css';
 
 const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel, confirmText = "Delete" }) => {

@@ -38,8 +38,7 @@ export const uploadPdf = async (req, res) => {
 
     res.status(201).json(pdf);
 } catch (error) {
-        // THIS LOG IS THE MAGIC KEY
-        console.log("🔴 UPLOAD CRASH REPORT:", error); 
+        console.error("PDF upload failed:", error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
@@ -90,7 +89,7 @@ export const deletePdf = async (req, res) => {
             pdf.deletedBy.includes(memberId.toString())
         );
 
-        // CASE A: Everyone has deleted it -> Nuke it permanently
+        // CASE A: Everyone has deleted it -> remove it permanently
         if (allMembersDeleted) {
             console.log(`🗑️ [BACKEND] Consensus reached. Permanently deleting PDF: ${pdf._id}`);
             

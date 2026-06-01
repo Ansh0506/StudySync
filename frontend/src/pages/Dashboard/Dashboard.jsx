@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import API from '../../services/api';
@@ -33,18 +33,18 @@ const DashboardPage = () => {
     const [joining, setJoining] = useState(false);
     const [roomToDelete, setRoomToDelete] = useState(null);
 
-    useEffect(() => { fetchRooms(); }, []);
-
-    const fetchRooms = async () => {
+    const fetchRooms = useCallback(async () => {
         try {
             const { data } = await API.get('/rooms/user');
             setRooms(data);
-        } catch (err) {
+        } catch {
             setError('Failed to load your study rooms.');
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => { fetchRooms(); }, [fetchRooms]);
 
     const handleCreateRoom = async (e) => {
         e.preventDefault();

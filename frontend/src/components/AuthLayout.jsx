@@ -1,6 +1,3 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-
 const AuthLayout = ({ children, illustrationText }) => {
     return (
         <div className="min-h-screen flex bg-gray-50">

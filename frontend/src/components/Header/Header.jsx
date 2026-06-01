@@ -1,6 +1,6 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { getAssetUrl } from '../../services/api';
 import './Header.css';
 
 const Header = () => {
@@ -50,7 +50,7 @@ const Header = () => {
                             <div className="ss-header-avatar">
                                 {user?.avatar ? (
                                     <img
-                                        src={`http://localhost:5000/${user.avatar.replace(/\\/g, '/')}`}
+                                        src={getAssetUrl(user.avatar)}
                                         alt="Avatar"
                                         style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
                                     />

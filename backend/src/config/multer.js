@@ -6,7 +6,6 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Ensure Uploads directory exists
 const uploadsPath = path.join(__dirname, '../../Uploads');
 if (!fs.existsSync(uploadsPath)) {
     fs.mkdirSync(uploadsPath, { recursive: true });
@@ -22,7 +21,6 @@ const storage = multer.diskStorage({
   }
 });
 
-// UPDATED: Accept PDFs OR Images
 const fileFilter = (req, file, cb) => {
   if (file.mimetype === "application/pdf" || file.mimetype.startsWith("image/")) {
     cb(null, true);

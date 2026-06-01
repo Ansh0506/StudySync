@@ -11,7 +11,7 @@ router.get("/:roomId", protect, async (req, res) => {
       .limit(100);
 
     res.json(messages);
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to load messages" });
   }
 });
