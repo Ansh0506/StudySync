@@ -18,6 +18,7 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
     rules: {
+      // These patterns are intentional in this app's context/provider structure.
       'react-hooks/set-state-in-effect': 'off',
       'react-refresh/only-export-components': 'off',
     },

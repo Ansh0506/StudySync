@@ -11,6 +11,7 @@ import {
 
 const router = express.Router();
 
+// Room routes cover dashboard listing, code-based joining, and workspace lookup.
 router.post("/create", protect, createRoom);
 router.post("/join", protect, joinRoom);
 router.get('/user', protect, getUserRooms);

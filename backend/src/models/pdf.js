@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Stores uploaded PDF metadata; the actual file is saved on disk.
 const pdfSchema = new mongoose.Schema(
   {
     roomId: {

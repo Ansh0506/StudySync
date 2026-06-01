@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Stores the collaborative room, membership, ownership, and selected PDF state.
 const roomSchema = new mongoose.Schema(
   {
     roomCode: {
@@ -16,13 +17,13 @@ const roomSchema = new mongoose.Schema(
       ref: "User",
       required: true
     },
-    // The original creator (permanent master) - never changes
+    // Permanent owner who can delete the room globally.
     master: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true
     },
-    // Temporary master when the original master leaves
+    // Temporary owner used if the permanent owner leaves but the room continues.
     tempMaster: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

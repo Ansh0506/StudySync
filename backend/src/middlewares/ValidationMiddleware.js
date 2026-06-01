@@ -1,16 +1,15 @@
 import { body, validationResult } from 'express-validator';
 
-// Helper function to handle the validation results
+// Sends validation failures before controller logic runs.
 const checkValidation = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        // Return a 400 Bad Request with the array of errors
         return res.status(400).json({ errors: errors.array() });
     }
     next();
 };
 
-// Rules for Registration
+// Registration requires usable account fields before hashing and saving.
 export const validateRegister = [
     body('name')
         .notEmpty().withMessage('Name is required')
@@ -23,7 +22,7 @@ export const validateRegister = [
     checkValidation
 ];
 
-// Rules for Login
+// Login validates the two fields needed to create a JWT session.
 export const validateLogin = [
     body('email')
         .notEmpty().withMessage('Email is required')

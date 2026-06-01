@@ -8,7 +8,7 @@ import ConfirmModal from '../../components/Reusable/ConfirmModal';
 
 import './Dashboard.css';
 
-/* ── Neon accent palette for room cards ── */
+// Stable palette used to give each room card a repeatable accent color.
 const ROOM_COLORS = [
     '#00e5ff',   // cyan
     '#b8ff57',   // lime
@@ -20,6 +20,7 @@ const ROOM_COLORS = [
 
 const getAccent = (id) => ROOM_COLORS[(id?.charCodeAt(0) ?? 0) % ROOM_COLORS.length];
 
+// Dashboard is the user's home base for creating, joining, opening, and deleting rooms.
 const DashboardPage = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -33,6 +34,7 @@ const DashboardPage = () => {
     const [joining, setJoining] = useState(false);
     const [roomToDelete, setRoomToDelete] = useState(null);
 
+    // Loads the rooms where the authenticated user is currently a member.
     const fetchRooms = useCallback(async () => {
         try {
             const { data } = await API.get('/rooms/user');
@@ -46,6 +48,7 @@ const DashboardPage = () => {
 
     useEffect(() => { fetchRooms(); }, [fetchRooms]);
 
+    // Creates a room, inserts it into local state, and opens the new workspace.
     const handleCreateRoom = async (e) => {
         e.preventDefault();
         setError('');
@@ -63,6 +66,7 @@ const DashboardPage = () => {
         }
     };
 
+    // Joins a room by code and navigates into that room when the backend accepts it.
     const handleJoinRoom = async (e) => {
         e.preventDefault();
         setError('');
@@ -79,10 +83,12 @@ const DashboardPage = () => {
     };
 
     const handleDeleteClick = (roomId, e) => {
+        // Prevent the card's "open room" click from firing behind the delete button.
         e.stopPropagation();
         setRoomToDelete(roomId);
     };
 
+    // Confirms dashboard room removal; backend handles owner delete vs member leave.
     const confirmDeleteRoom = async () => {
         if (!roomToDelete) return;
         try {
@@ -103,7 +109,7 @@ const DashboardPage = () => {
 
                 {error && <div className="db-error">{error}</div>}
 
-                {/* Welcome banner */}
+                {/* Summary area showing the current user and active room count. */}
                 <div className="db-welcome" style={{ marginBottom: '2rem' }}>
                     <div className="db-welcome-text">
                         <p className="db-welcome-eyebrow">Your workspace</p>
@@ -118,11 +124,11 @@ const DashboardPage = () => {
                     </div>
                 </div>
 
-                {/* Create & Join */}
+                {/* Quick actions for starting a room or entering a shared code. */}
                 <p className="db-section-label">Quick actions</p>
                 <div className="db-actions">
 
-                    {/* Create */}
+                    {/* Create-room form. */}
                     <div className="db-action-card">
                         <div className="db-action-card-header">
                             <div className="db-action-icon create">
@@ -150,7 +156,7 @@ const DashboardPage = () => {
                         </form>
                     </div>
 
-                    {/* Join */}
+                    {/* Join-room form. */}
                     <div className="db-action-card">
                         <div className="db-action-card-header">
                             <div className="db-action-icon join">
@@ -180,7 +186,7 @@ const DashboardPage = () => {
 
                 </div>
 
-                {/* Rooms section */}
+                {/* Existing rooms, loading skeletons, or the empty dashboard state. */}
                 <div className="db-rooms-section" id="rooms">
                     <div className="db-rooms-header">
                         <h2 className="db-rooms-title">Your Study Rooms</h2>
@@ -220,7 +226,7 @@ const DashboardPage = () => {
                                         className="db-room-card"
                                         onClick={() => navigate(`/room/${room._id}`)}
                                     >
-                                        {/* Thin glowing top bar */}
+                                        {/* Visual accent generated from the room ID. */}
                                         <div
                                             className="db-room-card-top"
                                             style={{ background: accent, boxShadow: `0 0 12px ${accent}80` }}

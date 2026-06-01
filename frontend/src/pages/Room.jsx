@@ -24,18 +24,21 @@ const RoomPage = () => {
     const [loading, setLoading] = useState(true);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    // RESIZABLE CHAT WIDTH
+    // The chat panel can be resized horizontally in the room workspace.
     const [chatWidth, setChatWidth] = useState(380);
-    // FULLSCREEN MODE
+
+    // Fullscreen hides the room header/chat split so the PDF can take over the view.
     const [isFullscreen, setIsFullscreen] = useState(false);
-    // CHAT OVERLAY IN FULLSCREEN
     const [isChatOverlayOpen, setIsChatOverlayOpen] = useState(false);
+
+    // Room owner IDs may arrive as raw strings or populated objects.
     const getId = (value) => value?._id || value;
     const isMaster = room && (
         getId(room.master)?.toString() === user?._id ||
         getId(room.head)?.toString() === user?._id
     );
 
+    // Confirms the modal action, then lets the backend decide delete-vs-leave by ownership.
     const confirmDeleteRoom = async () => {
         try {
             await API.delete(`/rooms/${id}`);
@@ -46,7 +49,7 @@ const RoomPage = () => {
             setShowDeleteModal(false);
         }
     };
-    // SOCKET + ROOM SETUP
+    // Fetch room details, open the authenticated socket, and join the room channel.
     useEffect(() => {
 
         if (authLoading) return;
@@ -110,7 +113,7 @@ const RoomPage = () => {
 
     }, [id, authLoading]);
 
-    // RESIZER
+    // Dragging the divider recalculates the chat panel width within readable bounds.
     const startResize = (e) => {
 
         e.preventDefault();
@@ -152,7 +155,7 @@ const RoomPage = () => {
         );
     };
 
-    // ESCAPE KEY TO EXIT FULLSCREEN
+    // Escape gives users a quick way out of PDF fullscreen mode.
     useEffect(() => {
         const handleEscapeKey = (e) => {
             if (e.key === 'Escape' && isFullscreen) {
@@ -163,7 +166,6 @@ const RoomPage = () => {
         return () => window.removeEventListener('keydown', handleEscapeKey);
     }, [isFullscreen, setIsFullscreen]);
 
-    // LOADING
     if (loading || authLoading) {
 
         return (
@@ -173,7 +175,6 @@ const RoomPage = () => {
         );
     }
 
-    // ERROR
     if (error) {
 
         return (
@@ -198,7 +199,7 @@ const RoomPage = () => {
 
         <div className="room-page">
 
-            {/* HEADER */}
+            {/* Room title, code, navigation, and delete/leave action. */}
             <header className="room-header" style={{ display: isFullscreen ? 'none' : 'flex' }}>
 
                 <div className="room-header-left">
@@ -234,10 +235,10 @@ const RoomPage = () => {
 
             </header>
 
-            {/* MAIN LAYOUT */}
+            {/* Main split workspace: PDF area, draggable divider, and chat. */}
             <main className="room-main">
 
-                {/* PDF SECTION */}
+                {/* The PDF section expands to full width in fullscreen mode. */}
                 <section
                     className="room-pdf-section"
                     style={{
@@ -254,7 +255,7 @@ const RoomPage = () => {
 
                 </section>
 
-                {/* RESIZER */}
+                {/* The resizer is hidden in fullscreen because the chat panel is hidden. */}
                 {!isFullscreen && (
                     <div
                         className="room-resizer"
@@ -262,7 +263,7 @@ const RoomPage = () => {
                     />
                 )}
 
-                {/* CHAT SECTION */}
+                {/* Standard room chat shown beside the PDF viewer. */}
                 {!isFullscreen && (
                     <aside
                         className="room-chat-section"
@@ -281,7 +282,7 @@ const RoomPage = () => {
                     </aside>
                 )}
 
-                {/* CHAT OVERLAY (Fullscreen Mode) */}
+                {/* Fullscreen mode shows chat as an overlay instead of a side panel. */}
                 {isFullscreen && isChatOverlayOpen && (
                     <div className="room-chat-overlay">
                         <button 
@@ -305,7 +306,7 @@ const RoomPage = () => {
                     </div>
                 )}
 
-                {/* CHAT TOGGLE BUTTON (Fullscreen Mode) */}
+                {/* Floating control used to reopen chat while reading fullscreen. */}
                 {isFullscreen && !isChatOverlayOpen && (
                     <button 
                         className="chat-toggle-btn"

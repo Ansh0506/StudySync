@@ -11,7 +11,7 @@ import { notFoundHandler, errorHandler } from './middlewares/ErrorMiddleware.js'
 import annotationRoutes from './routes/AnnotationRoute.js';
 import activityRoutes from './routes/ActivityRoute.js';
 
-// ES Module fix for __dirname
+// ES modules do not provide __dirname, so derive it for static file paths.
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -19,13 +19,17 @@ const app = express();
 
 app.use(requestLogger);
 app.use(express.json());
+
+// Only the configured frontend origin can call the API in browser environments.
 app.use(cors({
   origin: process.env.CORS_ORIGIN || "http://localhost:5173",
   credentials: true
 }));
 
+// Uploaded PDFs and avatars are served from this public path.
 app.use('/Uploads', express.static(path.join(__dirname, '../Uploads')));
 
+// API modules are kept separate by feature so controllers stay focused.
 app.use("/api/auth", authRoute);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/chat", ChatRoutes);
@@ -37,7 +41,7 @@ app.get("/", (req, res) => {
   res.send("StudySync Backend is running 🚀");
 });
 
-// ERROR HANDLING
-app.use(notFoundHandler); // Catches 404s
-app.use(errorHandler);    // Catches all other errors
+// Error handlers must be mounted after routes so unmatched requests fall through.
+app.use(notFoundHandler);
+app.use(errorHandler);
 export default app;

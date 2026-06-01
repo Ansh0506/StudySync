@@ -2,7 +2,7 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// REGISTER
+// Creates a new user, hashes their password, and returns an auth token.
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -43,7 +43,7 @@ export const register = async (req, res) => {
   }
 };
 
-// LOGIN
+// Verifies credentials and returns the same user/token shape used after registration.
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -79,7 +79,7 @@ export const login = async (req, res) => {
   }
 };
 
-//UPDATE PROFILE
+// Updates account details, optional avatar upload, and optional password change.
 export const updateProfile = async (req, res) => {
     try {
         const { name, email, currentPassword, newPassword } = req.body;
@@ -89,7 +89,7 @@ export const updateProfile = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Update basic fields
+        // Only overwrite fields the client explicitly sent.
         if (name) user.name = name;
         if (email) user.email = email;
         
@@ -97,7 +97,7 @@ export const updateProfile = async (req, res) => {
             user.avatar = `Uploads/${req.file.filename}`;
         }
         
-        // Secure Password Update Logic
+        // Password changes require the current password so a stolen session alone is not enough.
         if (newPassword) {
             if (!currentPassword) {
                 return res.status(400).json({ message: 'Please provide your current password to set a new one.' });

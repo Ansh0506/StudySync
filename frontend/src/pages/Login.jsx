@@ -12,6 +12,7 @@ const LoginPage = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
 
+    // Sends credentials through AuthContext, then opens the dashboard on success.
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -427,7 +428,7 @@ const LoginPage = () => {
                     </div>
                 </div>
 
-                {/* ── RIGHT: form ── */}
+                {/* Login form and account navigation. */}
                 <div className="login-right">
 
                     <div className="brand-row">
@@ -446,7 +447,7 @@ const LoginPage = () => {
 
                     <form onSubmit={handleSubmit} noValidate>
 
-                        {/* Email */}
+                        {/* Email field. */}
                         <div className="field-group">
                             <label className="field-label" htmlFor="email">Email Address</label>
                             <div className="field-wrapper">
@@ -469,7 +470,7 @@ const LoginPage = () => {
                             </div>
                         </div>
 
-                        {/* Password */}
+                        {/* Password field with visibility toggle. */}
                         <div className="field-group">
                             <label className="field-label" htmlFor="password">Password</label>
                             <div className="field-wrapper">
@@ -510,7 +511,7 @@ const LoginPage = () => {
                             </div>
                         </div>
 
-                        {/* Options row */}
+                        {/* Remember-me UI is local-only in the current implementation. */}
                         <div className="options-row">
                             <label
                                 className="remember-label"

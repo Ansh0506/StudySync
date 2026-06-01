@@ -5,6 +5,7 @@ import Footer from '../../components/Footer/Footer';
 import API, { getAssetUrl } from '../../services/api';
 import './Profile.css';
 
+// Lets users edit profile details, avatar, and password from one account page.
 const ProfilePage = () => {
     const { user, logout , setUser } = useAuth();
     const [activeTab, setActiveTab] = useState('general');
@@ -13,18 +14,18 @@ const ProfilePage = () => {
     ? getAssetUrl(user.avatar)
     : null;
     
-    // Form States
+    // General profile form state.
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     
-    // Avatar States
+    // Avatar file and preview state.
     const [avatarFile, setAvatarFile] = useState(null);
     const [avatarPreview, setAvatarPreview] = useState(initialAvatar);
     const fileInputRef = useRef(null);
 
-    // Status States
+    // Shared loading/message state for both profile tabs.
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ text: '', type: '' });
 
@@ -32,18 +33,18 @@ const ProfilePage = () => {
         return (name || 'User').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
     };
 
-    // --- Avatar Selection Handler ---
+    // Previews a selected image locally before the profile form is saved.
     const handleAvatarChange = (e) => {
         const file = e.target.files[0];
         if (file && file.type.startsWith('image/')) {
             setAvatarFile(file);
-            setAvatarPreview(URL.createObjectURL(file)); // Show preview instantly
+            setAvatarPreview(URL.createObjectURL(file));
         } else {
             setMessage({ text: 'Please select a valid image file.', type: 'error' });
         }
     };
 
-    // --- 1. GENERAL INFO HANDLER ---
+    // Saves profile text fields and optional avatar upload as multipart form data.
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -61,7 +62,7 @@ const ProfilePage = () => {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             
-            // --- THE FIX: UPDATE GLOBAL STATE INSTANTLY ---
+            // Update global auth state so the header/avatar changes immediately.
             setUser(data.user); 
             
             setMessage({ text: 'Profile updated successfully!', type: 'success' });
@@ -72,7 +73,7 @@ const ProfilePage = () => {
         }
     };
 
-    // --- 2. SECURITY / PASSWORD HANDLER ---
+    // Sends the current and new password to the same profile endpoint.
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -98,10 +99,9 @@ const ProfilePage = () => {
             <main className="profile-main">
                 <div className="profile-container">
                     
-                    {/* Top Banner / User Summary */}
+                    {/* Account summary and avatar picker. */}
                     <div className="profile-banner">
                         
-                        {/* --- NEW AVATAR UPLOAD UI --- */}
                         <div className="profile-avatar-wrapper" onClick={() => fileInputRef.current.click()}>
                             {avatarPreview ? (
                                 <img src={avatarPreview} alt="Avatar Preview" className="profile-avatar-img" />
@@ -117,7 +117,7 @@ const ProfilePage = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
                             </div>
-                            {/* Hidden file input */}
+                            {/* Hidden input is triggered by clicking the avatar preview. */}
                             <input 
                                 type="file" 
                                 accept="image/*" 
@@ -136,7 +136,7 @@ const ProfilePage = () => {
                     </div>
 
                     <div className="profile-layout">
-                        {/* Sidebar Navigation */}
+                        {/* Switches between profile details and password update forms. */}
                         <aside className="profile-sidebar">
                             <button 
                                 className={`profile-tab ${activeTab === 'general' ? 'active' : ''}`}
@@ -167,7 +167,7 @@ const ProfilePage = () => {
                             </button>
                         </aside>
 
-                        {/* Main Content Area */}
+                        {/* Active tab content and success/error messages. */}
                         <div className="profile-content">
                             {message.text && (
                                 <div className={`profile-alert ${message.type}`}>

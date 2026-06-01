@@ -4,6 +4,7 @@ import protect from '../middlewares/AuthMiddleware.js';
 
 const router = express.Router();
 
+// Annotation routes save, load, and delete PDF highlights for authenticated users.
 router.post('/save', protect, saveAnnotation);
 router.get('/pdf/:pdfId', protect, getPdfAnnotations);
 router.delete('/:id', protect, deleteAnnotation);

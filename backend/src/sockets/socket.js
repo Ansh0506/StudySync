@@ -3,8 +3,10 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import Message from "../models/Message.js";
 
+// Tracks connected users by room so presence can be broadcast on join/disconnect.
 const roomUsers = new Map();
 
+// Initializes all realtime collaboration events on the HTTP server.
 const initSocket = (server) => {
   const io = new Server(server, {
     cors: {
@@ -13,6 +15,7 @@ const initSocket = (server) => {
     }
   });
 
+  // Socket connections use the same JWT identity as the REST API.
   io.use(async (socket, next) => {
     try {
       const token = socket.handshake.auth?.token;
@@ -34,6 +37,7 @@ const initSocket = (server) => {
   io.on("connection", (socket) => {
     console.log("🟢 connected:", socket.user.name);
 
+    // Join a room channel and publish the latest active-user list.
     socket.on("join-room", ({ roomId }) => {
       socket.join(roomId);
 
@@ -52,6 +56,7 @@ const initSocket = (server) => {
       );
     });
 
+    // Persist each chat message, then broadcast it to everyone in the room.
     socket.on("send-message", async ({ roomId, text }) => {
       if (!text) return;
 
@@ -69,6 +74,7 @@ const initSocket = (server) => {
       });
     });
 
+    // Typing events are transient, so they are broadcast but not stored.
     socket.on("typing", ({ roomId }) => {
       socket.to(roomId).emit("user-typing", { userName: socket.user.name });
     });
@@ -77,6 +83,7 @@ const initSocket = (server) => {
       socket.to(roomId).emit("user-stopped-typing", { userName: socket.user.name });
     });
 
+    // Annotation events sync highlight creation/removal between active clients.
     socket.on("draw-annotation", (data) => {
       socket.to(data.roomId).emit("receive-annotation", data);
     });
@@ -85,6 +92,7 @@ const initSocket = (server) => {
       socket.to(data.roomId).emit("remove-annotation", data);
     });
 
+    // Remove this socket from any room presence lists when it disconnects.
     socket.on("disconnect", () => {
       for (const [roomId, users] of roomUsers.entries()) {
         if (users.has(socket.id)) {

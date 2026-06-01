@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+// Stores human-readable events used for the room activity timeline.
 const activitySchema = new mongoose.Schema({
     roomId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -11,12 +12,12 @@ const activitySchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    // A short code for the action (e.g., 'JOINED', 'LEFT', 'UPLOADED_PDF')
+    // Short machine-readable action code, such as JOINED or UPLOADED_PDF.
     action: {
         type: String,
         required: true
     },
-    // The human-readable message (e.g., 'Ansh uploaded Math_Notes.pdf')
+    // Text shown directly in the activity feed.
     description: {
         type: String,
         required: true

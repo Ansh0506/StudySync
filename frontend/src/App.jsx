@@ -5,6 +5,7 @@ import DashboardPage from './pages/Dashboard/Dashboard';
 import ProfilePage from './pages/Profile/Profile';
 import RoomPage from './pages/Room';
 
+// Defines the client-side pages and redirects the root URL to login.
 const App = () => {
     return (
         <Routes>

@@ -1,23 +1,22 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import API from '../services/api';
 
-// Create the Context
+// Stores the logged-in user and auth actions for the whole React app.
 const AuthContext = createContext();
 
-// Create a custom hook so components can easily access this context
+// Components call useAuth() instead of importing the context directly.
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // On initial load, check if the user has a valid token
+    // On page refresh, validate any saved token before rendering protected UI.
     useEffect(() => {
         const checkAuth = async () => {
             const token = localStorage.getItem('token');
             if (token) {
                 try {
-                    // Ask the backend to verify the token and return user data
                     const { data } = await API.get('/auth/me');
                     setUser(data);
                 } catch (error) {
@@ -31,7 +30,7 @@ export const AuthProvider = ({ children }) => {
         checkAuth();
     }, []);
 
-    // Login Function
+    // Logs in, stores the JWT, and updates global user state.
     const login = async (email, password) => {
         const { data } = await API.post('/auth/login', { email, password });
         localStorage.setItem('token', data.token);
@@ -39,7 +38,7 @@ export const AuthProvider = ({ children }) => {
         return data;
     };
 
-    // Register Function
+    // Registers a new account and immediately starts the logged-in session.
     const register = async (name, email, password) => {
         const { data } = await API.post('/auth/register', { name, email, password });
         localStorage.setItem('token', data.token);
@@ -47,7 +46,7 @@ export const AuthProvider = ({ children }) => {
         return data;
     };
 
-    // Logout Function
+    // Clears local auth state so future API calls no longer include a token.
     const logout = () => {
         localStorage.removeItem('token');
         setUser(null);

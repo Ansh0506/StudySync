@@ -401,16 +401,16 @@
 /* --- Avatar Upload UI --- */
 .profile-avatar-wrapper {
     position: relative;
-    width: 90px !important;     /* Force exact width */
-    height: 90px !important;    /* Force exact height */
-    border-radius: 50% !important; /* Make it a perfect circle */
+    width: 90px !important;     /* Keeps the avatar container square */
+    height: 90px !important;    /* Matches width for a circular crop */
+    border-radius: 50% !important; /* Creates the circular avatar shape */
     cursor: pointer;
-    overflow: hidden !important; /* CRITICAL: This clips the giant image into the circle */
-    flex-shrink: 0;             /* Prevents flexbox from squishing it */
+    overflow: hidden !important; /* Clips uploaded images to the circle */
+    flex-shrink: 0;             /* Prevents the avatar from shrinking in the banner */
     box-shadow: 0 8px 24px rgba(15, 52, 96, 0.2);
     border: 3px solid #fff;
     transition: transform 0.2s, box-shadow 0.2s;
-    background: #1a1a2e;        /* Fallback background */
+    background: #1a1a2e;        /* Background shown before an avatar image loads */
 }
 
 .dark .profile-avatar-wrapper {
@@ -426,7 +426,7 @@
 .profile-avatar-img {
     width: 100% !important;
     height: 100% !important;
-    object-fit: cover !important; /* CRITICAL: Fills the circle without squishing the image */
+    object-fit: cover !important; /* Fills the circle without distorting the image */
     display: block;
 }
 

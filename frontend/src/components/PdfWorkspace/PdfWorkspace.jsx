@@ -13,10 +13,10 @@ const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
     const [isSidebarOverlayOpen, setIsSidebarOverlayOpen] = useState(false);
     const fileInputRef = useRef(null);
     
-    // State to track which PDF is about to be deleted
+    // Stores the PDF selected for confirmation before removal.
     const [pdfToDelete, setPdfToDelete] = useState(null);
 
-    // Fetch PDFs on load
+    // Load the room's visible PDFs whenever the workspace changes rooms.
     useEffect(() => {
         if (!room) return;
         const fetchPdfs = async () => {
@@ -31,7 +31,7 @@ const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
         fetchPdfs();
     }, [room]);
 
-    // Upload Handler
+    // Validates and uploads a selected PDF, then makes it the active document.
     const handleFileUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -63,10 +63,12 @@ const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
     };
 
     const handleDeleteClick = (e, pdfId) => {
+        // Keep the click from also selecting the PDF card underneath.
         e.stopPropagation(); 
         setPdfToDelete(pdfId);
     };
 
+    // Removes the PDF for this user; the backend decides if it should be permanently deleted.
     const confirmDeletePdf = async () => {
         if (!pdfToDelete) return;
         
@@ -90,7 +92,7 @@ const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
     return (
         <div className="ws-root">
 
-            {/* ── Sidebar ── */}
+            {/* Document sidebar with upload, selection, and per-PDF removal controls. */}
             <div className={`ws-sidebar ${!isSidebarOpen ? 'collapsed' : ''} ${isFullscreen ? 'fullscreen-hidden' : ''}`}>
                 {isFullscreen && (
                     <div className="ws-overlay-backdrop" onClick={() => setIsSidebarOverlayOpen(false)} />
@@ -160,7 +162,7 @@ const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
                                     <p className="ws-pdf-by">by {pdf.uploadedBy?.name || 'User'}</p>
                                 </div>
 
-                                {/* FIX: Ensure this calls handleDeleteClick */}
+                                {/* Remove asks for confirmation instead of deleting immediately. */}
                                 <button 
                                     className="pdf-sidebar-delete-btn" 
                                     onClick={(e) => handleDeleteClick(e, pdf._id)}
@@ -176,7 +178,7 @@ const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
                 </div>
             </div>
 
-            {/* ── Collapsed Sidebar Toggle OR Fullscreen Sidebar Toggle ── */}
+            {/* Reopens the document list when it is collapsed or hidden in fullscreen. */}
             {(!isSidebarOpen || (isFullscreen && !isSidebarOverlayOpen)) && (
                 <button 
                     className="ws-collapse-toggle"
@@ -190,7 +192,7 @@ const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
                 </button>
             )}
 
-            {/* ── Sidebar Overlay (Fullscreen Mode) ── */}
+            {/* Fullscreen keeps document selection available without shrinking the PDF view. */}
             {isFullscreen && isSidebarOverlayOpen && (
                 <div className="ws-sidebar-overlay">
                     <div className="ws-sidebar-overlay-content">
@@ -279,7 +281,7 @@ const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
                 </div>
             )}
 
-            {/* ── Viewer ── */}
+            {/* Shows an empty prompt until a PDF is selected. */}
             <div className="ws-viewer-area">
                 {!activePdf ? (
                     <div className="ws-viewer-box">
@@ -335,7 +337,7 @@ const PdfWorkspace = ({ room, socket, isFullscreen, setIsFullscreen }) => {
                 )}
             </div>
 
-            {/* FIX: Actually render the ConfirmModal component at the bottom of the workspace! */}
+            {/* Shared confirmation modal for the PDF removal flow. */}
             <ConfirmModal 
                 isOpen={!!pdfToDelete}
                 title="Remove PDF"

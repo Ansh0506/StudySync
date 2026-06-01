@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
+// Vite compiles the React frontend and provides the local dev server.
 export default defineConfig({
   plugins: [react()],
 })

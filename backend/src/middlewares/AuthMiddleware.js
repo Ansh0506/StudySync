@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
+// Verifies the bearer token and attaches the authenticated user to req.user.
 const protect = async (req, res, next) => {
   let token;
 
@@ -15,6 +16,8 @@ const protect = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Controllers use req.user for ownership checks without exposing password hashes.
     req.user = await User.findById(decoded.id).select("-password");
     if (!req.user) {
       return res.status(401).json({ message: "Invalid token" });

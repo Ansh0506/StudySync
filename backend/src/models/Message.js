@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Stores persisted room chat messages; realtime delivery happens through sockets.
 const messageSchema = new mongoose.Schema(
   {
     roomId: {

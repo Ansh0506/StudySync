@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import './Footer.css';
 
+// Shared footer with brand link and current copyright year.
 const Footer = () => {
     const year = new Date().getFullYear();
 

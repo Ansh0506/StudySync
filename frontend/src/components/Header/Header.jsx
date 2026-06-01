@@ -3,10 +3,12 @@ import { useAuth } from '../../context/AuthContext';
 import { getAssetUrl } from '../../services/api';
 import './Header.css';
 
+// Shared top navigation used after authentication.
 const Header = () => {
     const { user } = useAuth();
 
     const toggleTheme = () => {
+        // This header uses the legacy "light" class toggle expected by the current CSS.
         const isLight = document.documentElement.classList.toggle('light');
         localStorage.setItem('theme', isLight ? 'light' : 'dark');
     };
@@ -18,7 +20,7 @@ const Header = () => {
         <header className="ss-header">
             <div className="ss-header-inner">
 
-                {/* Logo */}
+                {/* Brand link back to the dashboard. */}
                 <Link to="/dashboard" className="ss-header-brand">
                     <div className="ss-header-logo-icon">
                         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -30,7 +32,7 @@ const Header = () => {
 
                 <div className="ss-header-nav" />
 
-                {/* Actions */}
+                {/* Theme toggle and profile shortcut. */}
                 <div className="ss-header-actions">
 
                     <button className="ss-header-theme-btn" onClick={toggleTheme} title="Toggle Theme">

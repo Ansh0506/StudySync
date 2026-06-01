@@ -3,6 +3,7 @@ import API from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import './ChatBox.css';
 
+// Shows room chat history and sends/receives live messages over Socket.IO.
 const ChatBox = ({ room, socket, isOverlay = false }) => {
     const { user } = useAuth();
     const [messages, setMessages] = useState([]);
@@ -11,6 +12,7 @@ const ChatBox = ({ room, socket, isOverlay = false }) => {
     const messagesEndRef = useRef(null);
     const typingTimeout = useRef(null);
 
+    // Load persisted chat messages when entering a room.
     useEffect(() => {
         if (!room) return;
         const fetchMessages = async () => {
@@ -24,6 +26,7 @@ const ChatBox = ({ room, socket, isOverlay = false }) => {
         fetchMessages();
     }, [room]);
 
+    // Subscribe to realtime messages and typing indicators from the room socket.
     useEffect(() => {
         if (!socket) return;
         socket.on('receive-message', (message) => {
@@ -44,10 +47,12 @@ const ChatBox = ({ room, socket, isOverlay = false }) => {
         };
     }, [socket]);
 
+    // Keep the latest message or typing indicator visible.
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages, typingUsers]);
 
+    // Sends the current input as a room message and clears typing state.
     const handleSend = (e) => {
         e.preventDefault();
         if (!newMessage.trim() || !socket) return;
@@ -56,6 +61,7 @@ const ChatBox = ({ room, socket, isOverlay = false }) => {
         socket.emit('stop-typing', { roomId: room._id });
     };
 
+    // Emits typing state immediately, then clears it after a short pause.
     const handleTyping = (e) => {
         setNewMessage(e.target.value);
         if (!socket) return;
@@ -69,6 +75,7 @@ const ChatBox = ({ room, socket, isOverlay = false }) => {
     const getInitials = (name) =>
         (name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 
+    // Adds display metadata so consecutive messages from the same sender group together.
     const grouped = messages.reduce((acc, msg, i) => {
         const prev = messages[i - 1];
         const isMe = msg.senderName === user?.name;
@@ -80,7 +87,7 @@ const ChatBox = ({ room, socket, isOverlay = false }) => {
     return (
         <div className="chat-root">
 
-            {/* Header */}
+            {/* Chat title and message count. */}
             <div className="chat-header">
                 <div className="chat-header-left">
                     <div className="chat-header-icon">
@@ -103,7 +110,7 @@ const ChatBox = ({ room, socket, isOverlay = false }) => {
                 )}
             </div>
 
-            {/* Messages */}
+            {/* Message list, empty state, and typing indicator. */}
             <div className="chat-messages">
                 {grouped.length === 0 ? (
                     <div className="chat-empty">
@@ -151,7 +158,7 @@ const ChatBox = ({ room, socket, isOverlay = false }) => {
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
+            {/* Message composer. */}
             <div className="chat-input-area">
                 <form onSubmit={handleSend} className="chat-form" noValidate>
                     <input

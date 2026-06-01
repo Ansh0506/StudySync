@@ -7,7 +7,7 @@ import Message from '../models/Message.js';
 import fs from 'fs';
 import path from 'path';
 
-// CREATE ROOM
+// Creates a study room and assigns the creator as both current head and permanent owner.
 export const createRoom = async (req, res) => {
   try {
     const { name } = req.body;
@@ -18,7 +18,7 @@ export const createRoom = async (req, res) => {
     let roomCode;
     let exists = true;
 
-    // ensure unique room code
+    // Room codes are short, so keep generating until MongoDB confirms this one is unused.
     while (exists) {
       roomCode = generateRoomCode();
       exists = await Room.findOne({ roomCode });
@@ -28,7 +28,7 @@ export const createRoom = async (req, res) => {
       name,
       roomCode,
       head: req.user._id,
-      master: req.user._id, // Set the creator as the permanent master
+      master: req.user._id,
       tempMaster: null,
       members: [req.user._id]
     });
@@ -40,7 +40,7 @@ export const createRoom = async (req, res) => {
   }
 };
 
-// JOIN ROOM
+// Adds the current user to an existing room by room code.
 export const joinRoom = async (req, res) => {
   try {
     const { roomCode } = req.body;
@@ -55,7 +55,7 @@ export const joinRoom = async (req, res) => {
     room.members.push(req.user._id);
     await room.save();
 
-    // Create an activity log entry
+    // Activity entries let the UI show a lightweight timeline for the room.
     await Activity.create({
       roomId: room._id,
       userId: req.user._id,
@@ -70,7 +70,7 @@ export const joinRoom = async (req, res) => {
   }
 };
 
-// GET ROOM DETAILS
+// Loads room details with enough user information for the workspace header/member views.
 export const getRoom = async (req, res) => {
   try {
     const room = await Room.findById(req.params.id)
@@ -86,7 +86,7 @@ export const getRoom = async (req, res) => {
   }
 };
 
-// DELETE ROOM (Only master can delete permanently, others just leave)
+// Deletes a room for everyone when the permanent owner requests it; otherwise removes only the current member.
 export const deleteRoom = async (req, res) => {
     try {
         const room = await Room.findById(req.params.id);
@@ -95,23 +95,23 @@ export const deleteRoom = async (req, res) => {
             return res.status(404).json({ message: 'Room not found' });
         }
 
-        // Bulletproof ID checking
+        // Convert ObjectIds to strings before comparison so populated and raw IDs behave the same.
         const userId = req.user._id.toString();
         
-        // Handle old rooms that might not have 'master' set by falling back to 'head'
+        // Older rooms may not have master set, so head is the fallback owner.
         const masterId = room.master ? room.master.toString() : room.head.toString();
         
         const isMaster = masterId === userId;
         const userIsMember = room.members.some(memberId => memberId.toString() === userId);
 
-        // CASE 1: ORIGINAL CREATOR (MASTER) -> PERMANENTLY DELETE FOR EVERYONE
+        // Owners delete the room globally and clean up all child records/files.
         if (isMaster) {
             console.log(`🗑️ [BACKEND] Master deleting room permanently: ${room._id}`);
 
-            // Safely clean up physical PDF files (This fixes the 500 crash!)
+            // Files live on disk, so remove them separately from MongoDB records.
             const pdfs = await Pdf.find({ roomId: room._id });
             for (const pdf of pdfs) {
-                if (pdf.filePath) { // <-- CRITICAL: Prevents crash if path is missing
+                if (pdf.filePath) {
                     const fullPath = path.resolve(pdf.filePath);
                     if (fs.existsSync(fullPath)) {
                         fs.unlinkSync(fullPath);
@@ -119,7 +119,7 @@ export const deleteRoom = async (req, res) => {
                 }
             }
 
-            // Clean up database records
+            // Delete dependent records before deleting the room document itself.
             await Annotation.deleteMany({ roomId: room._id });
             await Pdf.deleteMany({ roomId: room._id });
             await Message.deleteMany({ roomId: room._id });
@@ -129,14 +129,14 @@ export const deleteRoom = async (req, res) => {
             return res.status(200).json({ message: 'Room permanently deleted for all users.' });
         }
 
-        // CASE 2: NORMAL MEMBER (OR TEMP MASTER) -> REMOVE THEMSELVES ONLY (LEAVE)
+        // Members use the same dashboard delete button as a "leave this room" action.
         if (userIsMember) {
             console.log(`👤 [BACKEND] User leaving room (Delete from my side): ${room._id}`);
             
-            // Remove user from members array
+            // Remove this user while preserving the room for everyone else.
             room.members = room.members.filter(memberId => memberId.toString() !== userId);
 
-            // If the leaving user was the tempMaster, reassign it to someone else
+            // If the temporary owner leaves, hand that role to the next remaining member.
             if (room.tempMaster && room.tempMaster.toString() === userId) {
                 room.tempMaster = room.members.length > 0 ? room.members[0] : null;
             }
@@ -159,7 +159,7 @@ export const deleteRoom = async (req, res) => {
         res.status(500).json({ message: 'Server error deleting room', error: error.message });
     }
 };
-// LEAVE ROOM
+// Explicit leave endpoint used when the UI wants "leave" separate from dashboard deletion.
 export const leaveRoom = async (req, res) => {
     try {
         const room = await Room.findById(req.params.id);
@@ -168,7 +168,7 @@ export const leaveRoom = async (req, res) => {
             return res.status(404).json({ message: 'Room not found' });
         }
 
-        // 1. Check if user is actually in the room
+        // Reject requests from users who are not currently members.
         const userId = req.user.id;
         if (!room.members.some(memberId => memberId.toString() === userId)) {
             return res.status(400).json({ message: 'You are not a member of this room' });
@@ -179,11 +179,11 @@ export const leaveRoom = async (req, res) => {
         const isMaster = masterId === userId;
         const isTempMaster = tempMasterId === userId;
 
-        // 2. If master is leaving
+        // If the permanent owner leaves, either assign a temporary owner or delete an empty room.
         if (isMaster) {
             console.log(`👑 [BACKEND] Master leaving room: ${room._id}`);
             
-            // If there are other members, set one as tempMaster
+            // Keep the room usable by assigning the first remaining member as temporary owner.
             if (room.members.length > 1) {
                 const newTempMaster = room.members.find(
                     memberId => memberId.toString() !== userId
@@ -191,7 +191,7 @@ export const leaveRoom = async (req, res) => {
                 room.tempMaster = newTempMaster;
                 console.log(`⚡ [BACKEND] Temp master assigned`);
             } else {
-                // Master is the only member - delete the entire room
+                // A one-person room has no one left to own it, so remove it completely.
                 console.log(`🗑️ [BACKEND] Last member (master) leaving - deleting room`);
                 
                 const pdfs = await Pdf.find({ roomId: room._id });
@@ -212,11 +212,11 @@ export const leaveRoom = async (req, res) => {
             }
         }
 
-        // 3. Remove the user from members
+        // Normal leave flow: remove the user from the membership list.
         room.members = room.members.filter(memberId => memberId.toString() !== userId);
         await room.save();
 
-        // Create activity log
+        // Record the leave event for the room activity timeline.
         await Activity.create({
           roomId: room._id,
           userId: req.user._id,
@@ -231,13 +231,12 @@ export const leaveRoom = async (req, res) => {
     }
 };
 
-// GET ALL ROOMS FOR CURRENT USER
+// Returns the dashboard room list for the authenticated user.
 export const getUserRooms = async (req, res) => {
     try {
-        // Find rooms where the current user's ID is in the members array
         const rooms = await Room.find({ members: req.user.id })
-            .populate('head', 'name email avatar') // Optional: Populates the creator's details
-            .sort({ createdAt: -1 }); // Sort by newest first
+            .populate('head', 'name email avatar')
+            .sort({ createdAt: -1 });
             
         res.status(200).json(rooms);
     } catch (error) {

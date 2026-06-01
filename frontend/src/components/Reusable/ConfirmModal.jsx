@@ -1,11 +1,12 @@
 import './ConfirmModal.css';
 
+// Reusable destructive-action confirmation modal used by room and PDF deletes.
 const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel, confirmText = "Delete" }) => {
     if (!isOpen) return null;
 
     return (
         <div className="custom-modal-overlay" onClick={onCancel}>
-            {/* stopPropagation prevents clicking the background from closing the modal if they click inside the box */}
+            {/* Background clicks cancel; clicks inside the modal stay inside the modal. */}
             <div className="custom-modal-content" onClick={(e) => e.stopPropagation()}>
                 
                 <div className="custom-modal-header">

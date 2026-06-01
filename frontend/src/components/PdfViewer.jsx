@@ -14,6 +14,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 const COLORS = ['#FFD700', '#FF7F50', '#90EE90', '#87CEEB', '#DDA0DD'];
 
+// Displays a PDF, handles page/zoom controls, and syncs highlights in real time.
 const PdfViewer = ({ activePdf, room, socket }) => {
     const { user } = useAuth();
     const pdfContainerRef = useRef(null);
@@ -30,13 +31,13 @@ const PdfViewer = ({ activePdf, room, socket }) => {
 
     const [selectedHighlightId, setSelectedHighlightId] = useState(null);
     
-    // Color picker dropdown state
+    // Tracks the highlight color menu.
     const [showColorPicker, setShowColorPicker] = useState(false);
     const colorPickerRef = useRef(null);
 
     const pdfUrl = getAssetUrl(activePdf.filePath);
 
-    // --- DETECT CURRENT PAGE ON SCROLL ---
+    // Update the current page by finding the rendered page closest to the viewport center.
     useEffect(() => {
         const container = pdfContainerRef.current;
         if (!container) return;
@@ -45,7 +46,6 @@ const PdfViewer = ({ activePdf, room, socket }) => {
             const containerRect = container.getBoundingClientRect();
             const viewportCenter = containerRect.top + containerRect.height / 2;
 
-            // Find which page is closest to viewport center
             let closestPage = 1;
             let closestDistance = Infinity;
 
@@ -70,12 +70,11 @@ const PdfViewer = ({ activePdf, room, socket }) => {
         return () => container.removeEventListener('scroll', handleScroll);
     }, [totalPages]);
 
-    // --- HANDLE PAGE INPUT CHANGE ---
+    // Let users type a page number freely, then jump only when Enter is pressed.
     const handlePageInput = (e) => {
         const value = e.target.value;
         setPageInput(value);
 
-        // Allow real-time validation but only navigate on Enter
         if (!/^\d*$/.test(value)) {
             setPageInput(pageInput);
         }
@@ -90,7 +89,6 @@ const PdfViewer = ({ activePdf, room, socket }) => {
             setCurrentPage(pageNum);
             setPageInput(pageNum.toString());
             
-            // Scroll to that page
             const pageRef = pageRefsMap.current.get(pageNum);
             if (pageRef) {
                 pageRef.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -98,12 +96,11 @@ const PdfViewer = ({ activePdf, room, socket }) => {
         }
     };
 
-    // --- HANDLE ZOOM INPUT CHANGE ---
+    // Zoom input mirrors page input: type first, apply on Enter.
     const handleZoomInput = (e) => {
         const value = e.target.value;
         setZoomInput(value);
 
-        // Allow real-time input
         if (!/^\d*$/.test(value)) {
             setZoomInput(zoomInput);
             return;
@@ -121,7 +118,7 @@ const PdfViewer = ({ activePdf, room, socket }) => {
         }
     };
 
-    // --- HANDLE PREVIOUS/NEXT NAVIGATION ---
+    // Toolbar buttons move page by page and scroll the selected page into view.
     const handleNextPage = () => {
         if (currentPage < totalPages) {
             const nextPage = currentPage + 1;
@@ -147,6 +144,8 @@ const PdfViewer = ({ activePdf, room, socket }) => {
             }
         }
     };
+
+    // Load saved highlights for the active PDF.
     useEffect(() => {
         const fetchHighlights = async () => {
             try {
@@ -159,7 +158,7 @@ const PdfViewer = ({ activePdf, room, socket }) => {
         fetchHighlights();
     }, [activePdf._id]);
 
-    // Handle click outside color picker to close it
+    // Close the color menu when the user clicks elsewhere.
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (colorPickerRef.current && !colorPickerRef.current.contains(event.target)) {
@@ -173,44 +172,39 @@ const PdfViewer = ({ activePdf, room, socket }) => {
         }
     }, [showColorPicker]);
 
-    // 2. LISTEN FOR SOCKET EVENTS
+    // Apply annotation socket events created by other users in the same room.
     useEffect(() => {
         if (!socket) return;
         
-        // When someone else draws...
         const handleReceive = (data) => {
             if (data.pdfId === activePdf._id) setHighlights((prev) => [...prev, data]);
         };
 
-        // When someone else hits Undo/Delete...
         const handleDelete = (data) => {
             console.log(`📥 [SOCKET RECEIVER] Heard remove-annotation for ID: ${data.id}`);
 
             if (data.pdfId === activePdf._id) {
-                // Filter out the deleted highlight by its ID
                 setHighlights((prev) => prev.filter(h => h.annotationData.id !== data.id));
                 setSelectedHighlightId(null);
             }
         };
 
         socket.on('receive-annotation', handleReceive);
-        socket.on('remove-annotation', handleDelete); // Start listening
+        socket.on('remove-annotation', handleDelete);
         
         return () => {
             socket.off('receive-annotation', handleReceive);
-            socket.off('remove-annotation', handleDelete); // Clean up listener
+            socket.off('remove-annotation', handleDelete);
         };
     }, [socket, activePdf._id]);
 
-    // --- REUSABLE DELETE FUNCTION ---
+    // Deletes a highlight locally, broadcasts the change, and removes it from MongoDB.
     const deleteHighlight = useCallback(async (highlightId) => {
         console.log(`🚀 [FRONTEND] Initiating Delete for ID: ${highlightId}`);
 
-        // 1. Remove locally
         setHighlights(prev => prev.filter(h => h.annotationData.id !== highlightId));
         setSelectedHighlightId(null);
 
-        // 2. Emit to Socket
         const socketPayload = { 
             roomId: room._id, 
             pdfId: activePdf._id, 
@@ -219,7 +213,6 @@ const PdfViewer = ({ activePdf, room, socket }) => {
         console.log(`📡 [SOCKET] Emitting delete-annotation:`, socketPayload);
         socket?.emit('delete-annotation', socketPayload);
 
-        // 3. Remove from Database
         try {
             const response = await API.delete(`/annotations/${highlightId}`);
             console.log("✅ [FRONTEND] DB Delete Success:", response.data);
@@ -228,7 +221,7 @@ const PdfViewer = ({ activePdf, room, socket }) => {
         }
     }, [activePdf._id, room._id, socket]);
 
-    // 3. UNDO (CTRL + Z) LOGIC
+    // Ctrl/Cmd+Z removes the current user's latest highlight on this PDF.
     useEffect(() => {
         const handleKeyDown = (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
@@ -245,14 +238,13 @@ const PdfViewer = ({ activePdf, room, socket }) => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [deleteHighlight, highlights, user._id]);
 
-    // 4. CAPTURE MOUSE HIGHLIGHTS
+    // Converts selected text rectangles into scale-independent highlight coordinates.
     const handleMouseUp = async (e) => {
         const selection = window.getSelection();
         const text = selection.toString().trim(); 
         
         if (!text) return; 
 
-        // Use event.currentTarget to get the specific page wrapper
         const layerRect = e.currentTarget.getBoundingClientRect();
 
         const range = selection.getRangeAt(0);
@@ -297,7 +289,7 @@ const PdfViewer = ({ activePdf, room, socket }) => {
     return (
         <div className="pdf-workspace">
             <div className="pdf-toolbar">
-                {/* Navigation Section */}
+                {/* Page navigation controls. */}
                 <div className="toolbar-section">
                     <button 
                         disabled={currentPage <= 1} 
@@ -308,7 +300,7 @@ const PdfViewer = ({ activePdf, room, socket }) => {
                         ← Prev
                     </button>
                     
-                    {/* Page Input */}
+                    {/* Manual page jump input. */}
                     <div className="page-input-group">
                         <input 
                             type="text" 
@@ -335,7 +327,7 @@ const PdfViewer = ({ activePdf, room, socket }) => {
 
                 <div className="toolbar-divider"></div>
 
-                {/* Zoom Section */}
+                {/* Zoom buttons and manual zoom percentage input. */}
                 <div className="toolbar-section zoom-section">
                     <button 
                         onClick={() => {
@@ -349,7 +341,7 @@ const PdfViewer = ({ activePdf, room, socket }) => {
                         −
                     </button>
                     
-                    {/* Zoom Input */}
+                    {/* Manual zoom input. */}
                     <div className="zoom-input-group">
                         <input 
                             type="text" 
@@ -378,7 +370,7 @@ const PdfViewer = ({ activePdf, room, socket }) => {
 
                 <div className="toolbar-divider"></div>
 
-                {/* Color Picker */}
+                {/* Highlight color picker. */}
                 <div className="color-picker-container" ref={colorPickerRef}>
                     <button 
                         className="color-preview-btn"
@@ -409,7 +401,7 @@ const PdfViewer = ({ activePdf, room, socket }) => {
                 </div>
             </div>
 
-            {/* PDF Container - Scrollable */}
+            {/* Scrollable PDF surface. */}
             <div className="pdf-container" ref={pdfContainerRef}>
                 <Document 
                     file={pdfUrl} 
@@ -419,7 +411,7 @@ const PdfViewer = ({ activePdf, room, socket }) => {
                     }}
                     className="pdf-document"
                 >
-                    {/* Render all pages in continuous scroll */}
+                    {/* Render all pages so scroll-based reading feels natural. */}
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
                         <div 
                             key={pageNum}
@@ -496,7 +488,7 @@ const PdfViewer = ({ activePdf, room, socket }) => {
                                 </div>
                             </div>
                             
-                            {/* Page separator */}
+                            {/* Visual divider between rendered pages. */}
                             {pageNum < totalPages && <div className="page-separator-line" />}
                         </div>
                     ))}

@@ -5,6 +5,7 @@ import path from 'path';
 import Activity from '../models/Activity.js';
 import Annotation from '../models/Annotation.js';
 
+// Handles PDF upload, records metadata, and makes the uploaded PDF active in its room.
 export const uploadPdf = async (req, res) => {
   try {
     const { roomId } = req.body;
@@ -25,7 +26,7 @@ export const uploadPdf = async (req, res) => {
       filePath: `Uploads/${req.file.filename}`
     });
 
-    // mark active PDF in room
+    // The newest upload becomes the room's active PDF by default.
     room.activePdf = pdf._id;
     await room.save();
 
@@ -43,7 +44,7 @@ export const uploadPdf = async (req, res) => {
     }
 };
 
-// GET PDF DETAILS
+// Returns one PDF metadata record by database ID.
 export const getPdf = async (req, res) => {
     try {
         const pdf = await Pdf.findById(req.params.id);
@@ -58,7 +59,7 @@ export const getPdf = async (req, res) => {
     }
 };
 
-// SMART DELETE PDF
+// Hides a PDF for one user, then permanently deletes it when every room member has removed it.
 export const deletePdf = async (req, res) => {
     try {
         const pdf = await Pdf.findById(req.params.id);
@@ -73,23 +74,22 @@ export const deletePdf = async (req, res) => {
 
         const userId = req.user._id.toString();
 
-        // 1. Initialize the array if it doesn't exist yet (for older PDFs)
+        // Older PDF records may not have the deletedBy array yet.
         if (!pdf.deletedBy) {
             pdf.deletedBy = [];
         }
 
-        // 2. Add the current user to the deletedBy list if they aren't in it
+        // Mark that this user no longer wants to see the PDF.
         if (!pdf.deletedBy.includes(userId)) {
             pdf.deletedBy.push(userId);
         }
 
-        // 3. Check for Consensus: Has every current member of the room deleted it?
-        // We check if every member in the room's member array exists in the pdf's deletedBy array.
+        // Only delete the physical file when every current member has removed it.
         const allMembersDeleted = room.members.every(memberId => 
             pdf.deletedBy.includes(memberId.toString())
         );
 
-        // CASE A: Everyone has deleted it -> remove it permanently
+        // Consensus reached: remove annotations, metadata, and the file on disk.
         if (allMembersDeleted) {
             console.log(`🗑️ [BACKEND] Consensus reached. Permanently deleting PDF: ${pdf._id}`);
             
@@ -106,7 +106,7 @@ export const deletePdf = async (req, res) => {
             return res.status(200).json({ message: 'PDF permanently deleted', action: 'permanently_deleted' });
         } 
         
-        // CASE B: Only this user deleted it -> Just hide it
+        // No consensus yet: save the per-user hidden state.
         console.log(`👁️ [BACKEND] User ${userId} hid PDF: ${pdf._id}`);
         await pdf.save();
         
@@ -117,16 +117,15 @@ export const deletePdf = async (req, res) => {
         res.status(500).json({ message: 'Server error deleting PDF', error: error.message });
     }
 };
-// GET ALL PDFs FOR A SPECIFIC ROOM
+// Lists room PDFs that are still visible to the current user.
 export const getRoomPdfs = async (req, res) => {
     try {
         const { roomId } = req.params;
         const userId = req.user._id;
 
-        // Find all PDFs for this room, BUT exclude ones where this user is in the deletedBy array
         const pdfs = await Pdf.find({ 
             roomId,
-            deletedBy: { $ne: userId } // $ne means "Not Equal to" or "Does not contain"
+            deletedBy: { $ne: userId }
         }).sort({ createdAt: -1 });
 
         res.status(200).json(pdfs);
@@ -135,25 +134,22 @@ export const getRoomPdfs = async (req, res) => {
     }
 };
 
-// DOWNLOAD PDF
+// Streams the stored PDF file back to the client as a download.
 export const downloadPdf = async (req, res) => {
     try {
-        // 1. Find the PDF in the database
         const pdf = await Pdf.findById(req.params.id);
         
         if (!pdf) {
             return res.status(404).json({ message: 'PDF metadata not found' });
         }
 
-        // 2. Locate the physical file on the server
         const fullPath = path.resolve(pdf.filePath); 
         
-        // 3. Double-check that the file actually exists on the hard drive
+        // The metadata can exist even if the local file was removed or storage changed.
         if (!fs.existsSync(fullPath)) {
             return res.status(404).json({ message: 'Physical file not found on server' });
         }
 
-        // 4. Force the download (sends the file to the user)
         res.download(fullPath, pdf.fileName);
         
     } catch (error) {

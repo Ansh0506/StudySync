@@ -1,6 +1,6 @@
 import Annotation from '../models/Annotation.js';
 
-// SAVE A NEW ANNOTATION
+// Saves one PDF annotation/highlight for the authenticated user.
 export const saveAnnotation = async (req, res) => {
     try {
         const { roomId, pdfId, pageNumber, type, annotationData } = req.body;
@@ -16,7 +16,7 @@ export const saveAnnotation = async (req, res) => {
 
         const savedAnnotation = await newAnnotation.save();
         
-        // Populate the user data so the frontend knows who drew it
+        // Return author details immediately so the UI can show who made the mark.
         await savedAnnotation.populate('userId', 'name avatar');
 
         res.status(201).json(savedAnnotation);
@@ -25,30 +25,30 @@ export const saveAnnotation = async (req, res) => {
     }
 };
 
-// GET ALL ANNOTATIONS FOR A SPECIFIC PDF
+// Loads all annotations for a PDF in drawing order.
 export const getPdfAnnotations = async (req, res) => {
     try {
         const { pdfId } = req.params;
 
         const annotations = await Annotation.find({ pdfId })
             .populate('userId', 'name avatar')
-            .sort({ createdAt: 1 }); // Oldest first, so they draw in the correct order
+            .sort({ createdAt: 1 });
 
         res.status(200).json(annotations);
     } catch (error) {
         res.status(500).json({ message: 'Server error fetching annotations', error: error.message });
     }
 };
-// DELETE ANNOTATION (UNDO)
+// Deletes a highlight by its frontend-generated annotationData.id, with MongoDB _id fallback.
 export const deleteAnnotation = async (req, res) => {
     try {
         const targetId = req.params.id;
         console.log(`\n🗑️ [BACKEND] Attempting to delete highlight: ${targetId}`);
         
-        // Try to find it by the timestamp string inside annotationData
+        // Most deletes pass the stable highlight ID stored inside annotationData.
         let deleted = await Annotation.findOneAndDelete({ 'annotationData.id': targetId });
 
-        // Fallback: Just in case it somehow got passed as a pure MongoDB _id
+        // If a MongoDB ObjectId is passed instead, still allow the delete.
         if (!deleted && targetId.length === 24) {
             deleted = await Annotation.findByIdAndDelete(targetId);
         }

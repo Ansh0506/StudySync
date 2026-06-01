@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext();
 
+// Ensures theme consumers are wrapped by ThemeProvider.
 export const useTheme = () => {
     const context = useContext(ThemeContext);
     if (!context) {
@@ -12,19 +13,17 @@ export const useTheme = () => {
 
 export const ThemeProvider = ({ children }) => {
     const [isDark, setIsDark] = useState(() => {
-        // Check localStorage for saved preference
+        // Prefer the user's saved choice, then fall back to the system theme.
         const saved = localStorage.getItem('theme-mode');
         if (saved) return saved === 'dark';
         
-        // Check system preference
         return window.matchMedia('(prefers-color-scheme: dark)').matches;
     });
 
     useEffect(() => {
-        // Update localStorage
+        // Keep both CSS selectors and localStorage in sync with React state.
         localStorage.setItem('theme-mode', isDark ? 'dark' : 'light');
         
-        // Update document class and HTML attribute
         if (isDark) {
             document.documentElement.classList.add('dark');
             document.documentElement.setAttribute('data-theme', 'dark');
@@ -35,6 +34,7 @@ export const ThemeProvider = ({ children }) => {
     }, [isDark]);
 
     const toggleTheme = () => {
+        // The UI only needs to flip the boolean; the effect above handles the DOM.
         setIsDark(prev => !prev);
     };
 

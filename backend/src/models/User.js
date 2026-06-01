@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Stores user credentials and profile information.
 const userSchema = new mongoose.Schema(
   {
     name: {

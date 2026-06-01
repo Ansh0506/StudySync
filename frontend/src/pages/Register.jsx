@@ -15,6 +15,7 @@ const RegisterPage = () => {
     const { register } = useAuth();
     const navigate = useNavigate();
 
+    // Scores password strength for the visual meter below the password field.
     const passwordStrength = (pw) => {
         if (!pw) return { score: 0, label: '', color: '#e8e6e1' };
         let score = 0;
@@ -30,6 +31,7 @@ const RegisterPage = () => {
 
     const strength = passwordStrength(password);
 
+    // Validates local form rules before creating the account through AuthContext.
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -401,7 +403,7 @@ const RegisterPage = () => {
                     </div>
                 </div>
 
-                {/* ── RIGHT ── */}
+                {/* Registration form and account navigation. */}
                 <div className="reg-right">
 
                     <div className="brand-row">
@@ -420,7 +422,7 @@ const RegisterPage = () => {
 
                     <form onSubmit={handleSubmit} noValidate>
 
-                        {/* Full Name */}
+                        {/* Full name field. */}
                         <div className="field-group">
                             <label className="field-label" htmlFor="name">Full Name</label>
                             <div className="field-wrapper">
@@ -443,7 +445,7 @@ const RegisterPage = () => {
                             </div>
                         </div>
 
-                        {/* Email */}
+                        {/* Email field. */}
                         <div className="field-group">
                             <label className="field-label" htmlFor="email">Email Address</label>
                             <div className="field-wrapper">
@@ -466,7 +468,7 @@ const RegisterPage = () => {
                             </div>
                         </div>
 
-                        {/* Password */}
+                        {/* Password field with strength feedback. */}
                         <div className="field-group">
                             <label className="field-label" htmlFor="password">Password</label>
                             <div className="field-wrapper">
@@ -504,7 +506,7 @@ const RegisterPage = () => {
                                 </button>
                             </div>
 
-                            {/* Strength meter */}
+                            {/* Visual password strength meter. */}
                             {password && (
                                 <div className="strength-row">
                                     <div className="strength-bars">
@@ -520,7 +522,7 @@ const RegisterPage = () => {
                             )}
                         </div>
 
-                        {/* Confirm Password */}
+                        {/* Confirm password field with match/mismatch border feedback. */}
                         <div className="field-group">
                             <label className="field-label" htmlFor="confirmPassword">Confirm Password</label>
                             <div className="field-wrapper">
@@ -564,7 +566,7 @@ const RegisterPage = () => {
                             </div>
                         </div>
 
-                        {/* Terms */}
+                        {/* Terms agreement must be checked before submit. */}
                         <div className="terms-row" onClick={() => setAgreed(!agreed)}>
                             <div className={`custom-checkbox ${agreed ? 'checked' : ''}`}>
                                 {agreed && (

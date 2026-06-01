@@ -4,6 +4,7 @@ import Message from "../models/Message.js";
 
 const router = express.Router();
 
+// Loads recent chat history; live messages are handled by Socket.IO.
 router.get("/:roomId", protect, async (req, res) => {
   try {
     const messages = await Message.find({ roomId: req.params.roomId })
